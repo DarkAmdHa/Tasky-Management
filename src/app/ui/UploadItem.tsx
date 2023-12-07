@@ -15,6 +15,7 @@ function UploadItem({
         width={50}
         height={50}
         className="rounded-2xl overflow-hidden w-3/12"
+        alt=""
       />
       <div className="w-9/12">
         <p className="text-semibold text-sm break-words">{name}</p>
