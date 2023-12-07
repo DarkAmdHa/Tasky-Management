@@ -19,14 +19,15 @@ export default function Page() {
       </div>
 
       <div className="flex gap-4">
-        <div className="flex flex-col w-6/12 gap-10">
+        <div className="flex flex-col w-5/12 gap-10">
           <RecentTasks />
           <RecentUploads />
         </div>
-        <div className="w-4/12">
+        <div className="w-5/12">
           <CurrentProjects />
         </div>
-        <div className="flex gap-4 flex-col  w-4/12">
+        <div className="flex gap-4 flex-col  w-2/12">
+          <div className="mt-6"></div>
           <AddNotesCard />
           <AddFilesCard />
         </div>
