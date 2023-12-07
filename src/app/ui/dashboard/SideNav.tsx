@@ -44,7 +44,7 @@ function SideNav() {
   ];
 
   return (
-    <div className="flex gap-4 w-1/5 bg-white p-10">
+    <div className="flex gap-4 w-3/12 bg-white py-10 px-5">
       <div className="w-full flex flex-col gap-5 items-center text-center">
         <div className="font-bold text-gray-500 pb-5">
           Tasky<span className="text-primary">Tasky</span>.

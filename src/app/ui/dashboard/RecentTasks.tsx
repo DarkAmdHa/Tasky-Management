@@ -1,5 +1,5 @@
 import TaskCard from "@/app/ui/TaskCard";
-
+import Title from "../Title";
 function RecentTasks() {
   const tasks = [
     {
@@ -17,7 +17,8 @@ function RecentTasks() {
   ];
   return (
     <div className="flex flex-col gap-4">
-      <p className="font-semibold text-gray-900">Recent Tasks</p>
+      <Title title="Recent Tasks" />
+
       <div className="flex flex-col gap-4">
         {tasks.map((task) => (
           <TaskCard key={task.name} name={task.name} status={task.status} />
