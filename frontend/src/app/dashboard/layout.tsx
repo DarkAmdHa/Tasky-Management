@@ -5,7 +5,7 @@ import NotificationBell from "../ui/dashboard/NotificationBell";
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen max-w-7xl m-auto">
+    <div className="flex min-h-screen m-auto">
       <SideNav />
       <div className="w-full bg-backgroundColor">
         <div className="p-7 gap-5 flex flex-col">

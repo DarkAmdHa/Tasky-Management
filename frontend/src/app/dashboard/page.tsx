@@ -6,10 +6,10 @@ import AddFilesCard from "../ui/AddFilesCard";
 
 export default function Page() {
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4  px-6 py-8  rounded-lg bg-white shadow-lg">
       <div className="flex flex-col w-5/12 gap-10">
         <RecentTasks />
-        {/* <RecentUploads /> */}
+        <RecentUploads />
       </div>
       <div className="w-5/12">
         <CurrentProjects />

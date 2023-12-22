@@ -13,7 +13,8 @@ class AuthController extends Controller
     public function register(RegisterRequest $request){
 
         $data = $request->validated();
-        User::create($data);
+        $user = User::create($data);
+        return json_encode($user);
     }
 
     public function login(){

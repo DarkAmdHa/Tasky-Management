@@ -33,19 +33,23 @@ function page({ params }: { params: { projectId: string } }) {
   return (
     <div className="px-6 py-8 rounded-lg bg-white shadow-lg">
       <div className="mb-4">
-        <BackButton href="/dashboard/projects" />
+        <BackButton href="/dashboard" />
       </div>
       <h1 className="text-3xl font-bold text-gray-700  mb-4">
         {project.projectName}
       </h1>
       <div>{project.projectDescription}</div>
-      <div className="flex flex-col gap-1 mt-2">
+      <div className="flex flex-col gap-2 mt-2">
         <h1 className="text-xl font-semibold text-gray-700">Tasks</h1>
-        {!project.tasks.length ? (
-          <p className="font-semibold italic text-gray-500">No Tasks Added.</p>
-        ) : (
-          project.tasks.map((task) => <TaskCard task={task} key={task.id} />)
-        )}
+        <div className="flex flex-col gap-4">
+          {!project.tasks.length ? (
+            <p className="font-semibold italic text-gray-500">
+              No Tasks Added.
+            </p>
+          ) : (
+            project.tasks.map((task) => <TaskCard task={task} key={task.id} />)
+          )}
+        </div>
 
         <Link
           className="mt-4"

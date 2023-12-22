@@ -1,5 +1,7 @@
 import React from "react";
 import BackButton from "@/app/ui/BackButton";
+import Comment from "@/app/ui/Comment";
+import CommentInput from "@/app/ui/CommentInput";
 
 function page() {
   const task = {
@@ -11,20 +13,23 @@ function page() {
     comments: [
       {
         userId: 1,
+        userName: "Hello",
         comment: "COMENT",
-        date: "Comment",
+        date: "12/1/2020",
         isEdited: false,
       },
       {
         userId: 1,
+        userName: "Hello",
         comment: "COMENT",
-        date: "Comment",
+        date: "12/1/2020",
         isEdited: false,
       },
       {
         userId: 1,
+        userName: "Hello",
         comment: "COMENT",
-        date: "Comment",
+        date: "12/1/2020",
         isEdited: false,
       },
     ],
@@ -33,20 +38,23 @@ function page() {
   return (
     <div className="px-6 py-8 rounded-lg bg-white shadow-lg">
       <div className="mb-4">
-        <BackButton href="/dashboard/tasks" />
+        <BackButton href="/dashboard" />
       </div>
       <h1 className="text-3xl font-bold text-gray-700  mb-4">{task.name}</h1>
       <div>{task.description}</div>
       <div>{task.status}</div>
       <div className="flex flex-col gap-1 mt-2">
         <h1 className="text-xl font-semibold text-gray-700">Comments</h1>
-        {!task.comments.length ? (
-          <p className="font-semibold italic text-gray-500">No Comments.</p>
-        ) : (
-          task.comments.map((comment) => (
-            <div key={comment.userId}>{comment.comment}</div>
-          ))
-        )}
+        <div className="flex flex-col gap-4">
+          {!task.comments.length ? (
+            <p className="font-semibold italic text-gray-500">No Comments.</p>
+          ) : (
+            task.comments.map((comment) => (
+              <Comment key={comment.userId} comment={comment} />
+            ))
+          )}
+        </div>
+        <CommentInput />
       </div>
     </div>
   );

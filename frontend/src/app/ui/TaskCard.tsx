@@ -20,7 +20,7 @@ function TaskCard({
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
         className={clsx(
-          "bg-white flex items-center gap-4 text-semibold rounded-xl shadow-none p-4 text-gray-500 transition hover:shadow-lg",
+          "bg-tertiary flex items-center gap-4 text-semibold rounded-xl shadow p-4 text-gray-500 transition hover:shadow-lg",
           {
             "line-through": task.status === "done",
           }

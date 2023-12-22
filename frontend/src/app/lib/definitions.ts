@@ -29,3 +29,19 @@ export type projectForm = {
   title: string;
   description: string;
 };
+
+export type Comment = {
+  userId: number;
+  userName: string;
+  comment: string;
+  date: string;
+  isEdited: boolean;
+};
+
+export type ProjectWithTasks = {
+  id: number;
+  projectName: string;
+  projectDescription: string;
+  percentageCompleted: number;
+  tasks: Task[];
+};

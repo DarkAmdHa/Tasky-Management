@@ -32,20 +32,20 @@ function SideNav() {
       href: "/dashboard/tasks",
       icon: DevicePhoneMobileIcon,
     },
-    // {
-    //   name: "Planning",
-    //   href: "/dashboard/planning",
-    //   icon: DocumentDuplicateIcon,
-    // },
-    // {
-    //   name: "Team",
-    //   href: "/dashboard/team",
-    //   icon: RadioIcon,
-    // },
+    {
+      name: "Planning",
+      href: "/dashboard/planning",
+      icon: DocumentDuplicateIcon,
+    },
+    {
+      name: "Team",
+      href: "/dashboard/team",
+      icon: RadioIcon,
+    },
   ];
 
   return (
-    <div className="flex gap-4 w-3/12 bg-white py-10 px-5  sticky max-h-screen top-0 shadow-xl">
+    <div className="flex gap-4 w-2/12 bg-white py-10 px-5  sticky max-h-screen top-0 shadow-xl">
       <div className="w-full flex flex-col gap-5 items-center text-center">
         <div className="font-bold text-gray-500 pb-5">
           <Link href="/">

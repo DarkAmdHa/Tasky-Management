@@ -35,7 +35,7 @@ function page() {
   return (
     <div className="px-6 py-8 rounded-lg bg-white shadow-lg">
       <div className="mb-4">
-        <BackButton href="./" />
+        <BackButton href="./dashboard" />
       </div>
 
       <h1 className="text-3xl font-bold text-gray-700  mb-4">Add Task</h1>
@@ -62,7 +62,7 @@ function page() {
               onChange={(e) =>
                 setForm({ ...form, [e.target.name]: e.target.value })
               }
-              className="min-h-[40px] w-full shadow-none transition focus:outline-none focus:shadow p-3"
+              className="min-h-[40px] w-full border-gray-200 resize-none border transition focus:outline-none focus:shadow p-3"
             />
           </div>
         </div>
@@ -72,7 +72,7 @@ function page() {
           </label>
           <div className="flex gap-2 border-b border-gray-200">
             <textarea
-              className="min-h-[80px] w-full shadow-none transition focus:outline-none focus:shadow p-3"
+              className="min-h-[80px] w-full border-gray-200 resize-none border transition focus:outline-none focus:shadow p-3"
               name="description"
               id="description"
               placeholder="Task Description"
