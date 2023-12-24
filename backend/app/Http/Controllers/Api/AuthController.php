@@ -3,26 +3,50 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Nette\Schema\ValidationException;
 
 class AuthController extends Controller
 {
     //
     public function register(RegisterRequest $request){
-
         $data = $request->validated();
         $user = User::create($data);
-        return json_encode($user);
+
+        $response = [
+            'success' => true,
+            'message' => "Registration successful."
+        ];
+        return response()->json($response, 201);
     }
 
-    public function login(){
+    public function login(LoginRequest $request){
+        $credentials = $request->validated();
+
+        if(Auth::attempt($credentials)){
+            $request->session()->regenerate();
+            $user = User::where('email', $credentials['email'])->first();
+            return response()->json([
+                'user'=>$user
+            ], Response::HTTP_OK);
+        }
+
+        return response()->json([
+            'error' => "Wrong Credentials",
+        ], Response::HTTP_FORBIDDEN);
 
     }
 
-    public function logout(){
-
+    public function logout(Request $request){
+        Auth::guard('web')->logout();
     }
+
+
 
 }

@@ -8,8 +8,6 @@ import {
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import Spinner from "@/app/ui/Spinner";
-import { registerUser } from "@/app/lib/functions";
-import { useRouter } from "next/navigation";
 
 function RegisterForm() {
   const [form, setForm] = useState({
@@ -31,7 +29,6 @@ function RegisterForm() {
   const [formErrors, setFormErrors] = useState(initialErrorState);
   const [isSaving, setIsSaving] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
-  const router = useRouter();
 
   const validateData = () => {
     let errors: Record<string, string[]> = {
@@ -86,16 +83,13 @@ function RegisterForm() {
     if (validateData()) {
       setIsSaving(true);
       try {
-        await registerUser(form);
-        router.push("/dashboard");
+        register({ setFormErrors, initialErrorState, form });
       } catch (e: any) {
         //TODO: Implement proper alerts
         if (process.env.NEXT_PUBLIC_ENVIRONMENT === "development") {
           console.log(e);
         }
-        if (e.errors) {
-          setFormErrors({ ...formErrors, ...e.errors });
-        }
+        alert("Something went wrong.");
       } finally {
         setIsSaving(false);
       }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Comment } from "../lib/definitions";
+import { Comment } from "../../lib/definitions";
 import Image from "next/image";
 function Comment({ comment }: { comment: Comment }) {
   return (

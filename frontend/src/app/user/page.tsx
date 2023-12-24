@@ -8,6 +8,7 @@ function page() {
     lastName: "Hamid",
     email: "hamidtahir2000@gmail.com",
     imgSrc: "/",
+    emailVerified: "",
     profession: "Front-end Developer",
     phone: "",
     teams: [

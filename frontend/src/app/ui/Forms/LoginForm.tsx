@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import {
   UserIcon,
   LockClosedIcon,
@@ -10,17 +10,105 @@ import {
 import Link from "next/link";
 import Spinner from "@/app/ui/Spinner";
 
+import { loginUser } from "@/lib/functions";
+import { AuthContext } from "@/contexts/authContext";
+import { useRouter } from "next/navigation";
+
 function LoginForm() {
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  const handleLogin = () => {
-    setIsSaving(true);
+  const initialErrorState: Record<string, string[]> = {
+    email: [],
+    password: [],
   };
-  const [isSaving, setIsSaving] = useState(false);
+
+  const { authObject, setAuthObject } = useContext(AuthContext);
+  const router = useRouter();
+  useEffect(() => {
+    if (Object.keys(authObject.user).length) {
+      router.push("/dashboard");
+    }
+  }, [authObject]);
+
+  // Use a ref to store the timeout ID
+  const errorsClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [formErrors, setFormErrors] = useState(initialErrorState);
+
+  const validateData = () => {
+    let errors: Record<string, string[]> = {
+      email: [],
+      password: [],
+    };
+
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    const parts = form.email.split("@");
+    const domainParts = parts[1]?.split(".");
+
+    if (
+      !form.email.includes("@") ||
+      parts.length !== 2 ||
+      domainParts.length < 2 ||
+      domainParts.some((part) => part === "") ||
+      !emailRegex.test(form.email)
+    ) {
+      errors.email.push("Please provide a valid email");
+    }
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+    if (!passwordRegex.test(form.password)) {
+      errors.password.push(
+        "Password must be at least 8 characters long, containing at least one uppercase letter, one lowercase letter, and one symbol."
+      );
+    }
+
+    //If errors found
+    if (Object.keys(errors).find((key: string) => errors[key].length > 0)) {
+      // Clear previous timeout
+      if (errorsClearTimeoutRef.current) {
+        clearTimeout(errorsClearTimeoutRef.current);
+      }
+      setFormErrors(errors);
+      errorsClearTimeoutRef.current = setTimeout(() => {
+        setFormErrors(initialErrorState);
+      }, 5000);
+      return false;
+    }
+    return true;
+  };
+  const handleLogin = async () => {
+    if (authObject.isLoading) return false;
+    if (validateData()) {
+      //Set Loading
+      setAuthObject({ ...authObject, isLoading: true });
+      console.log(authObject);
+
+      try {
+        //Loading
+        const user = await loginUser(form, setFormErrors, initialErrorState);
+        console.log(authObject);
+        setAuthObject({
+          ...authObject,
+          isLoading: false,
+          user: user,
+          isSuccess: true,
+        });
+      } catch (e: any) {
+        //TODO: Implement proper alerts
+        if (process.env.NEXT_PUBLIC_ENVIRONMENT === "development") {
+          console.log(e);
+        }
+        alert("Something went wrong");
+      } finally {
+        //Unset Loading
+      }
+    }
+  };
   const [hidePassword, setHidePassword] = useState(true);
+
   return (
     <div className="flex flex-col w-full gap-10">
       <div className="flex flex-col">
@@ -42,6 +130,16 @@ function LoginForm() {
               className="min-h-[40px] w-full focus:outline-none px-2"
             />
           </div>
+          {formErrors.email.length
+            ? formErrors.email.map((error, index) => (
+                <div
+                  key={`email-error-${index}`}
+                  className="opacity-0 transition animate-fadeIn text-red-500 text-xs mt-1"
+                >
+                  {error}
+                </div>
+              ))
+            : ""}
         </div>
 
         <div className="mb-2">
@@ -74,6 +172,16 @@ function LoginForm() {
               />
             )}
           </div>
+          {formErrors.password.length
+            ? formErrors.password.map((error, index) => (
+                <div
+                  key={`password-error-${index}`}
+                  className="opacity-0 transition animate-fadeIn text-red-500 text-xs mt-1"
+                >
+                  {error}
+                </div>
+              ))
+            : ""}
         </div>
         <div className="flex justify-end text-gray-500 text-sm">
           <p className="cursor-pointer hover:underline">Forgot Password?</p>
@@ -83,7 +191,7 @@ function LoginForm() {
           onClick={handleLogin}
           className="w-full bg-gradient-to-r from-primary to-primaryDarker transition hover:shadow-xl text-white p-3 rounded-3xl mt-6 flex items-center justify-center"
         >
-          {isSaving ? (
+          {authObject.isLoading ? (
             <Spinner />
           ) : (
             <p className="min-h-[30px] flex items-center">Login</p>

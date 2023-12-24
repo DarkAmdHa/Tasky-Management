@@ -1,4 +1,4 @@
-import { Project } from "@/app/lib/definitions";
+import { Project } from "@/lib/definitions";
 import CompletionPercentage from "./CompletionPercentage";
 import Link from "next/link";
 function ProjectCard({

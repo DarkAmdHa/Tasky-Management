@@ -8,10 +8,14 @@ import {
 } from "@heroicons/react/24/outline";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 
 import Upsell from "@/app/ui/Upsell";
+import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import { useState, useContext } from "react";
+import { AuthContext } from "@/contexts/authContext";
+import { logoutUser } from "@/lib/functions";
 
 function SideNav() {
   const path = usePathname();
@@ -44,6 +48,26 @@ function SideNav() {
     },
   ];
 
+  const [isSaving, setIsSaving] = useState(false);
+  const { authObject, setAuthObject } = useContext(AuthContext);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    if (isSaving) return false;
+    if (window.confirm("Are you sure ?")) {
+      setIsSaving(true);
+      try {
+        await logoutUser();
+        setAuthObject({ ...authObject, user: {} });
+        router.push("/");
+      } catch (e) {
+        alert("Something went wrong!");
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
+
   return (
     <div className="flex gap-4 w-2/12 bg-white py-10 px-5  sticky max-h-screen top-0 shadow-xl">
       <div className="w-full flex flex-col gap-5 items-center text-center">
@@ -73,6 +97,13 @@ function SideNav() {
               </Link>
             );
           })}
+          <div
+            onClick={handleLogout}
+            className="flex py-2 px-5 gap-5 transition hover:bg-red-700 hover:text-white rounded-lg font-bold text-gray-500 cursor-pointer"
+          >
+            <ExclamationCircleIcon className="w-5" />
+            Logout
+          </div>
         </div>
         <Upsell />
       </div>

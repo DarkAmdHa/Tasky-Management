@@ -1,4 +1,4 @@
-import { RegisterObject, projectForm } from "@/app/lib/definitions";
+import { RegisterObject, projectForm, LoginObject } from "@/lib/definitions";
 import axios, { AxiosError } from "axios";
 
 axios.defaults.withCredentials = true;
@@ -33,6 +33,19 @@ export const registerUser = async (form: RegisterObject) => {
   // Fetch XSRF token
 };
 
+export const loginUser = async (
+  form: LoginObject,
+  setFormErrors: React.Dispatch<React.SetStateAction<Record<string, string[]>>>,
+  initialErrorState: Record<string, string[]>
+) => {
+  await getXSRFToken();
+  const resp = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/login`,
+    form
+  );
+  return resp.data.user;
+};
+
 export const getXSRFToken = () => {
   try {
     return axios.get(
@@ -53,4 +66,36 @@ export const createProject = (form: projectForm) => {
 
 export const createTask = (form: projectForm) => {
   console.log("creating");
+};
+
+export const getUser = async () => {
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/user`
+    );
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.errors) {
+      throw new CustomError(true, error.response.data.errors);
+    } else {
+      throw new Error("Server Error");
+    }
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    const resp = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/logout`
+    );
+    return resp.data;
+  } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.errors) {
+      throw new CustomError(true, error.response.data.errors);
+    } else {
+      throw new Error("Server Error");
+    }
+  }
 };

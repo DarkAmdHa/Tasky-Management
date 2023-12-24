@@ -293,7 +293,7 @@ function page() {
         </p>
       </div>
 
-      <div className="flex gap-5 max-w-[90%] py-10 overflow-auto">
+      <div className="flex gap-5 max-w-full py-10 overflow-auto">
         {projectsAndTasks.map((project) => (
           <TasksColumn project={project} key={project.id} />
         ))}

@@ -3,8 +3,8 @@ import { CheckCircleIcon, DocumentPlusIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import clsx from "clsx";
 import Link from "next/link";
-import { Task } from "../lib/definitions";
-import { taskUpdate } from "../lib/functions";
+import { Task } from "../../lib/definitions";
+import { taskUpdate } from "../../lib/functions";
 
 function TaskCard({
   task,

@@ -1,3 +1,4 @@
+"use client";
 import Nav from "@/app/ui/Nav";
 
 export default function Home() {

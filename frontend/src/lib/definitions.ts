@@ -25,6 +25,11 @@ export type RegisterObject = {
   last_name: string;
 };
 
+export type LoginObject = {
+  email: string;
+  password: string;
+};
+
 export type projectForm = {
   title: string;
   description: string;
@@ -44,4 +49,19 @@ export type ProjectWithTasks = {
   projectDescription: string;
   percentageCompleted: number;
   tasks: Task[];
+};
+
+export type UserObject = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+};
+
+export type AuthObject = {
+  user: UserObject | {};
+  isLoading: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  errorMessage: Object;
 };

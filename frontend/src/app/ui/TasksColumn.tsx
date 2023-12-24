@@ -1,5 +1,5 @@
 import React from "react";
-import { ProjectWithTasks } from "../lib/definitions";
+import { ProjectWithTasks } from "../../lib/definitions";
 import TaskCard from "./TaskCard";
 import Link from "next/link";
 
