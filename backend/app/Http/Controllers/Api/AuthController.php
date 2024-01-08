@@ -27,10 +27,13 @@ class AuthController extends Controller
     }
 
     public function login(LoginRequest $request){
+        error_log('sadasdsadsadasd');
+
+        error_log(json_encode($request->cookies->all()));
+
         $credentials = $request->validated();
 
         if(Auth::attempt($credentials)){
-            $request->session()->regenerate();
             $user = User::where('email', $credentials['email'])->first();
             return response()->json([
                 'user'=>$user

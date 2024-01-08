@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import Spinner from "@/app/ui/Spinner";
+import { registerUser } from "@/lib/functions";
 
 function RegisterForm() {
   const [form, setForm] = useState({
@@ -83,7 +84,7 @@ function RegisterForm() {
     if (validateData()) {
       setIsSaving(true);
       try {
-        register({ setFormErrors, initialErrorState, form });
+        registerUser(form, setFormErrors, initialErrorState);
       } catch (e: any) {
         //TODO: Implement proper alerts
         if (process.env.NEXT_PUBLIC_ENVIRONMENT === "development") {

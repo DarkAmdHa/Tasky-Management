@@ -1,5 +1,5 @@
 import { RegisterObject, projectForm, LoginObject } from "@/lib/definitions";
-import axios, { AxiosError } from "axios";
+import axios from "./axios";
 
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
@@ -15,7 +15,11 @@ class CustomError extends Error {
   }
 }
 
-export const registerUser = async (form: RegisterObject) => {
+export const registerUser = async (
+  form: RegisterObject,
+  setFormErrors: React.Dispatch<React.SetStateAction<Record<string, string[]>>>,
+  initialErrorState: Record<string, string[]>
+) => {
   try {
     await getXSRFToken();
     const resp = await axios.post(
@@ -70,18 +74,98 @@ export const createTask = (form: projectForm) => {
 
 export const getUser = async () => {
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/user`
+    await getXSRFToken();
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/user`,
+      {
+        credentials: "include",
+        cache: "no-store",
+      }
     );
     if (response.status === 200) {
-      return response.data;
+      const data = await response.json();
+      return data;
     }
   } catch (error: any) {
-    if (error.response && error.response.data && error.response.data.errors) {
-      throw new CustomError(true, error.response.data.errors);
-    } else {
-      throw new Error("Server Error");
-    }
+    console.log(error);
+
+    throw new Error("Server Error");
+  }
+};
+
+export const getLatestActiveProjects = async (count: number) => {
+  try {
+    await getXSRFToken();
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/latestProjects`,
+      {
+        count,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+
+    throw new Error("Server Error");
+  }
+};
+
+export const getLatestActiveTasks = async (count: number) => {
+  try {
+    await getXSRFToken();
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/latestTasks`,
+      {
+        credentials: "include",
+        cache: "no-store",
+        method: "POST",
+        body: JSON.stringify({
+          count,
+        }),
+      }
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+
+    throw new Error("Server Error");
+  }
+};
+
+export const getLatestUploads = async (count: number) => {
+  try {
+    await getXSRFToken();
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/latestUploads`,
+      {
+        credentials: "include",
+        cache: "no-store",
+        method: "POST",
+        body: JSON.stringify({
+          count,
+        }),
+      }
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+
+    throw new Error("Server Error");
+  }
+};
+
+export const getDashboardData = async () => {
+  try {
+    await getXSRFToken();
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/dashboardData`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+
+    throw new Error("Server Error");
   }
 };
 

@@ -1,9 +1,7 @@
-"use client";
 import SideNav from "@/app/ui/dashboard/SideNav";
 import UserDetails from "../ui/UserDetails";
 import SearchBar from "../ui/SearchBar";
 import NotificationBell from "../ui/dashboard/NotificationBell";
-import { useRouter } from "next/navigation";
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (

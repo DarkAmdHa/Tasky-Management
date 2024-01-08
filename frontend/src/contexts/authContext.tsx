@@ -1,5 +1,4 @@
 "use client";
-
 import { createContext, useState, useEffect } from "react";
 import { AuthObject, UserObject } from "@/lib/definitions";
 import { getUser } from "@/lib/functions";
@@ -28,21 +27,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const [authObject, setAuthObject] = useState({
     user: {},
-    isLoading: false,
+    isLoading: true,
     isSuccess: false,
     isError: false,
     errorMessage: {},
   });
 
-  //Check if user already authenticated
+  // Check if user already authenticated
   useEffect(() => {
     const getUserAsync = async () => {
       try {
         const user = await getUser();
         if (user) {
-          setAuthObject({ ...authObject, user });
+          setAuthObject({ ...authObject, user, isLoading: false });
+        } else {
+          setAuthObject({ ...authObject, isLoading: false });
         }
       } catch (e) {
+        //TODO: Implement Alert
         router.push("/");
       }
     };

@@ -18,4 +18,8 @@ class Project extends Model
     public function tasks(){
         return $this->hasMany(Task::class);
     }
+
+    public function latestTasks() {
+        return $this->hasMany(Task::class)->latest()->take(3);
+    }
 }

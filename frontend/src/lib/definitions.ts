@@ -1,8 +1,8 @@
 export type Project = {
   id: number;
-  projectName: string;
-  projectDescription: string;
-  percentageCompleted: number;
+  name: string;
+  description: string;
+  percentageCompleted?: number;
 };
 
 export type Task = {
@@ -65,3 +65,14 @@ export type AuthObject = {
   isError: boolean;
   errorMessage: Object;
 };
+
+export type DashboardObject = {
+  latestProjects: Project[] | [];
+  latestUploads: Upload[] | [];
+  isLoading: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  errorMessage: Object;
+};
+
+export type Upload = {};
