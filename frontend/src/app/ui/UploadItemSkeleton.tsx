@@ -15,6 +15,6 @@ function UploadItemSkeleton({ count }: { count: number }) {
       ))}
     </>
   );
-}
+} 
 
 export default UploadItemSkeleton;
