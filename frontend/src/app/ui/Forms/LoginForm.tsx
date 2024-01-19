@@ -13,6 +13,7 @@ import Spinner from "@/app/ui/Spinner";
 import { loginUser } from "@/lib/functions";
 import { AuthContext } from "@/contexts/authContext";
 import { useRouter } from "next/navigation";
+import axios, { AxiosError } from "axios";
 
 function LoginForm() {
   const [form, setForm] = useState({
@@ -80,30 +81,44 @@ function LoginForm() {
     return true;
   };
   const handleLogin = async () => {
-    if (authObject.isLoading) return false;
+    if (authObject.isLoading || authObject.isAuthenticating) return false;
     if (validateData()) {
       //Set Loading
-      setAuthObject({ ...authObject, isLoading: true });
-      console.log(authObject);
+      setAuthObject({ ...authObject, isAuthenticating: true });
 
       try {
         //Loading
-        const user = await loginUser(form, setFormErrors, initialErrorState);
-        console.log(authObject);
+        const user = await loginUser(form);
         setAuthObject({
           ...authObject,
           isLoading: false,
+          isAuthenticating: false,
           user: user,
           isSuccess: true,
         });
-      } catch (e: any) {
+      } catch (err: unknown) {
+        setAuthObject({
+          ...authObject,
+          isLoading: false,
+          isAuthenticating: false,
+          isSuccess: false,
+          isError: true,
+        });
+        if (axios.isAxiosError(err)) {
+          if (err.response?.data.errors) {
+            setFormErrors({
+              ...initialErrorState,
+              ...err.response.data.errors,
+            });
+          }
+        } else {
+          alert("Something went wrong");
+        }
+
         //TODO: Implement proper alerts
         if (process.env.NEXT_PUBLIC_ENVIRONMENT === "development") {
-          console.log(e);
+          console.log(err);
         }
-        alert("Something went wrong");
-      } finally {
-        //Unset Loading
       }
     }
   };
@@ -189,9 +204,10 @@ function LoginForm() {
 
         <button
           onClick={handleLogin}
+          disabled={authObject.isAuthenticating}
           className="w-full bg-gradient-to-r from-primary to-primaryDarker transition hover:shadow-xl text-white p-3 rounded-3xl mt-6 flex items-center justify-center"
         >
-          {authObject.isLoading ? (
+          {authObject.isAuthenticating ? (
             <Spinner />
           ) : (
             <p className="min-h-[30px] flex items-center">Login</p>

@@ -15,33 +15,17 @@ class CustomError extends Error {
   }
 }
 
-export const registerUser = async (
-  form: RegisterObject,
-  setFormErrors: React.Dispatch<React.SetStateAction<Record<string, string[]>>>,
-  initialErrorState: Record<string, string[]>
-) => {
-  try {
-    await getXSRFToken();
-    const resp = await axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/register`,
-      form
-    );
-    return resp.data;
-  } catch (error: any) {
-    if (error.response && error.response.data && error.response.data.errors) {
-      throw new CustomError(true, error.response.data.errors);
-    } else {
-      throw new Error("Server Error");
-    }
-  }
+export const registerUser = async (form: RegisterObject) => {
+  await getXSRFToken();
+  const resp = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/register`,
+    form
+  );
+  return resp.data.user;
   // Fetch XSRF token
 };
 
-export const loginUser = async (
-  form: LoginObject,
-  setFormErrors: React.Dispatch<React.SetStateAction<Record<string, string[]>>>,
-  initialErrorState: Record<string, string[]>
-) => {
+export const loginUser = async (form: LoginObject) => {
   await getXSRFToken();
   const resp = await axios.post(
     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/login`,

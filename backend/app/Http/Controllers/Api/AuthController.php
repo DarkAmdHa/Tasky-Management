@@ -16,21 +16,17 @@ class AuthController extends Controller
 {
     //
     public function register(RegisterRequest $request){
-        $data = $request->validated();
-        $user = User::create($data);
+        $credentials = $request->validated();
+        $user = User::create($credentials);
 
-        $response = [
-            'success' => true,
-            'message' => "Registration successful."
-        ];
-        return response()->json($response, 201);
+        Auth::login($user);
+
+        return response()->json([
+            'user'=>$user
+        ], Response::HTTP_OK);
     }
 
     public function login(LoginRequest $request){
-        error_log('sadasdsadsadasd');
-
-        error_log(json_encode($request->cookies->all()));
-
         $credentials = $request->validated();
 
         if(Auth::attempt($credentials)){

@@ -6,6 +6,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,6 @@ use Symfony\Component\HttpFoundation\Response;
 */
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/user', function(Request $request){
-        error_log("asd");
         return $request->user();
     });
 
@@ -27,14 +27,19 @@ Route::middleware('auth:sanctum')->group(function(){
 
     Route::get('/dashboardData', function(Request $request){
         $count = 3;
+        $user = Auth::user();
 
-        $latestProjects = Project::latest()->take($count)->get();
+        $latestProjects = $user->projects()->latest()->take($count)->get();
 
         foreach ($latestProjects as $project){
             $project->load(['latestTasks']);
         }
 
         return response()->json(["latestProjects"=>$latestProjects, "latestUploads"=>[]]);
+    });
+
+    Route::get('/projects', function(Request $request){
+        
     });
 });
 

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import {
   UserIcon,
   LockClosedIcon,
@@ -9,8 +9,12 @@ import {
 import Link from "next/link";
 import Spinner from "@/app/ui/Spinner";
 import { registerUser } from "@/lib/functions";
+import axios from "axios";
+import { AuthContext } from "@/contexts/authContext";
+import { useRouter } from "next/navigation";
 
 function RegisterForm() {
+  const router = useRouter();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -27,8 +31,10 @@ function RegisterForm() {
   // Use a ref to store the timeout ID
   const errorsClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Get authObject from context
+  const { authObject, setAuthObject } = useContext(AuthContext);
+
   const [formErrors, setFormErrors] = useState(initialErrorState);
-  const [isSaving, setIsSaving] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
 
   const validateData = () => {
@@ -80,19 +86,41 @@ function RegisterForm() {
   };
 
   const handleRegister = async () => {
-    if (isSaving) return false;
+    if (authObject.isAuthenticating || authObject.isLoading) return false;
     if (validateData()) {
-      setIsSaving(true);
+      //Set Loading
+      setAuthObject({ ...authObject, isAuthenticating: true });
       try {
-        registerUser(form, setFormErrors, initialErrorState);
-      } catch (e: any) {
-        //TODO: Implement proper alerts
+        const user = await registerUser(form);
+        setAuthObject({
+          ...authObject,
+          isLoading: false,
+          isAuthenticating: false,
+          user: user,
+          isSuccess: true,
+        });
+        router.push("/dashboard");
+      } catch (err: unknown) {
         if (process.env.NEXT_PUBLIC_ENVIRONMENT === "development") {
-          console.log(e);
+          console.log(err);
         }
-        alert("Something went wrong.");
-      } finally {
-        setIsSaving(false);
+        setAuthObject({
+          ...authObject,
+          isLoading: false,
+          isAuthenticating: false,
+          isSuccess: false,
+          isError: true,
+        });
+        if (axios.isAxiosError(err)) {
+          if (err.response?.data.errors) {
+            setFormErrors({
+              ...initialErrorState,
+              ...err.response.data.errors,
+            });
+          }
+        } else {
+          alert("Something went wrong");
+        }
       }
     }
   };
@@ -231,10 +259,10 @@ function RegisterForm() {
 
         <button
           onClick={handleRegister}
-          disabled={isSaving}
+          disabled={authObject.isAuthenticating}
           className="w-full bg-gradient-to-r from-primary to-primaryDarker transition hover:shadow-xl text-white p-3 rounded-3xl mt-6 flex items-center justify-center"
         >
-          {isSaving ? (
+          {authObject.isAuthenticating ? (
             <Spinner />
           ) : (
             <p className="min-h-[30px] flex items-center">Register</p>

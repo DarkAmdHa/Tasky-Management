@@ -61,6 +61,7 @@ export type UserObject = {
 export type AuthObject = {
   user: UserObject | {};
   isLoading: boolean;
+  isAuthenticating: boolean;
   isSuccess: boolean;
   isError: boolean;
   errorMessage: Object;

@@ -2,7 +2,7 @@
 import { createContext, useState, useEffect } from "react";
 import { AuthObject, UserObject } from "@/lib/definitions";
 import { getUser } from "@/lib/functions";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 type AuthContextType = {
   authObject: AuthObject;
@@ -12,6 +12,7 @@ type AuthContextType = {
 const defaultAuthObject: AuthObject = {
   user: {},
   isLoading: false,
+  isAuthenticating: false,
   isSuccess: false,
   isError: false,
   errorMessage: {},
@@ -24,10 +25,12 @@ export const AuthContext = createContext<AuthContextType>({
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const [authObject, setAuthObject] = useState({
     user: {},
     isLoading: true,
+    isAuthenticating: false,
     isSuccess: false,
     isError: false,
     errorMessage: {},
@@ -42,6 +45,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setAuthObject({ ...authObject, user, isLoading: false });
         } else {
           setAuthObject({ ...authObject, isLoading: false });
+          if (pathname.startsWith("/dashboard")) {
+            router.push("/");
+          }
         }
       } catch (e) {
         //TODO: Implement Alert
