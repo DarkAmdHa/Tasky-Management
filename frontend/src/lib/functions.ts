@@ -78,67 +78,6 @@ export const getUser = async () => {
   }
 };
 
-export const getLatestActiveProjects = async (count: number) => {
-  try {
-    await getXSRFToken();
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/latestProjects`,
-      {
-        count,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.log(error);
-
-    throw new Error("Server Error");
-  }
-};
-
-export const getLatestActiveTasks = async (count: number) => {
-  try {
-    await getXSRFToken();
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/latestTasks`,
-      {
-        credentials: "include",
-        cache: "no-store",
-        method: "POST",
-        body: JSON.stringify({
-          count,
-        }),
-      }
-    );
-    return response;
-  } catch (error) {
-    console.log(error);
-
-    throw new Error("Server Error");
-  }
-};
-
-export const getLatestUploads = async (count: number) => {
-  try {
-    await getXSRFToken();
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/latestUploads`,
-      {
-        credentials: "include",
-        cache: "no-store",
-        method: "POST",
-        body: JSON.stringify({
-          count,
-        }),
-      }
-    );
-    return response;
-  } catch (error) {
-    console.log(error);
-
-    throw new Error("Server Error");
-  }
-};
-
 export const getDashboardData = async () => {
   try {
     await getXSRFToken();
@@ -166,4 +105,30 @@ export const logoutUser = async () => {
       throw new Error("Server Error");
     }
   }
+};
+
+export const getProjects = async (page: Number) => {
+  const resp = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/projects?page=${page}`
+  );
+  return resp.data;
+};
+export const getProjectsWithTasks = async (page: Number) => {
+  const resp = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/tasks?page=${page}`
+  );
+  return resp.data;
+};
+
+export const getProjectWithTasks = async (id: number) => {
+  const resp = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/projects/${id}`
+  );
+  return resp.data;
+};
+export const getTask = async (id: number) => {
+  const resp = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/tasks/${id}`
+  );
+  return resp.data;
 };

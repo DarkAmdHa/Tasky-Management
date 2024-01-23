@@ -1,8 +1,6 @@
 "use client";
 import UploadItem from "@/app/ui/UploadItem";
 import Title from "../Title";
-import { useState, useEffect } from "react";
-import { getLatestUploads } from "@/lib/functions";
 import UploadItemSkeleton from "../UploadItemSkeleton";
 function RecentUploads({ dashboardData }) {
   // const uploadedItems = [

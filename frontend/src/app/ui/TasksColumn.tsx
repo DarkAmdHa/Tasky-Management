@@ -8,7 +8,7 @@ function TasksColumn({ project }: { project: ProjectWithTasks }) {
     <div className="flex border border-gray rounded p-4 min-w-[340px] shadow max-h-[400px] overflow-auto">
       <div className="flex flex-col gap-4 w-full">
         <Link href={`/dashboard/projects/${project.id}`}>
-          <p className="text-xl font-semibold">{project.projectName} Tasks</p>
+          <p className="text-xl font-semibold">{project.name} Tasks</p>
         </Link>
         <div className="flex flex-col gap-4">
           {project.tasks.map((task) => (

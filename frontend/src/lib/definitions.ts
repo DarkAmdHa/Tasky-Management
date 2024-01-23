@@ -45,9 +45,8 @@ export type Comment = {
 
 export type ProjectWithTasks = {
   id: number;
-  projectName: string;
-  projectDescription: string;
-  percentageCompleted: number;
+  name: string;
+  description: string;
   tasks: Task[];
 };
 
