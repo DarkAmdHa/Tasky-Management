@@ -10,7 +10,6 @@ function Pagination({
   const router = useRouter();
   const pathname = usePathname();
   const handlePageChange = (index: number) => {
-    debugger;
     if (index != currentPage) {
       const params = new URLSearchParams(searchParams.toString());
       params.set("page", index.toString());

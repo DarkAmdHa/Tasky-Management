@@ -48,14 +48,6 @@ export const taskUpdate = (taskId: number, taskStatus: string) => {
   taskStatus = taskStatus === "done" ? "ongoing" : "done";
 };
 
-export const createProject = (form: projectForm) => {
-  console.log("creating");
-};
-
-export const createTask = (form: projectForm) => {
-  console.log("creating");
-};
-
 export const getUser = async () => {
   try {
     await getXSRFToken();
@@ -129,6 +121,37 @@ export const getProjectWithTasks = async (id: number) => {
 export const getTask = async (id: number) => {
   const resp = await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/tasks/${id}`
+  );
+  return resp.data;
+};
+
+export const createTask = async ({
+  name,
+  description,
+  projectId,
+}: {
+  name: string;
+  description: string;
+  projectId: number;
+}) => {
+  const resp = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/tasks`,
+    {
+      projectId,
+      name,
+      description,
+    }
+  );
+  return resp.data;
+};
+
+export const createProject = async ({ name, description }: projectForm) => {
+  const resp = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/projects`,
+    {
+      name,
+      description,
+    }
   );
   return resp.data;
 };

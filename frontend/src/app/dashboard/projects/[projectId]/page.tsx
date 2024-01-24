@@ -5,7 +5,7 @@ function page({ params }: { params: { projectId: string } }) {
   return (
     <div className="px-6 py-8 rounded-lg bg-white shadow-lg">
       <div className="mb-4">
-        <BackButton href="/dashboard" />
+        <BackButton />
       </div>
 
       <Project id={+params.projectId} />

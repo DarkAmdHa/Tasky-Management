@@ -1,29 +1,28 @@
 "use client";
 import { useState } from "react";
-import Spinner from "@/app/ui/Spinner";
-import { useRouter } from "next/navigation";
-import { createTask } from "@/lib/functions";
 import Button from "@/app/ui/Button";
 import { PlusIcon } from "@heroicons/react/24/solid";
+import { createProject } from "@/lib/functions";
+import Spinner from "@/app/ui/Spinner";
+import { useRouter } from "next/navigation";
 
-function CreateTask({ projectId }: { projectId: number }) {
-  const router = useRouter();
-
+function CreateProject() {
   const [form, setForm] = useState({
     name: "",
     description: "",
-    projectId: +projectId,
   });
+
   const [isSaving, setIsSaving] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!isSaving) {
       setIsSaving(true);
       try {
-        const createdTask = await createTask(form);
-        router.push(`/dashboard/tasks/${createdTask.id}`);
-        // TODO: Message that the task was created.
+        const createdProject = await createProject(form);
+        router.push(`/dashboard/projects/${createdProject.id}`);
+        // TODO: Message that the project was created.
       } catch (e) {
         console.error(e);
         //TODO: Handle Error
@@ -34,8 +33,10 @@ function CreateTask({ projectId }: { projectId: number }) {
   };
 
   return (
-    <div className="">
-      <h1 className="text-3xl font-bold text-gray-700  mb-4">Add Task</h1>
+    <div>
+      <h1 className="text-3xl font-bold text-gray-700 mb-6">
+        Start a New Project
+      </h1>
 
       <p className="text-gray-600 mb-4 text-lg max-w-3xl">
         Embark on your project journey with TaskyTasky, where every idea can
@@ -43,18 +44,17 @@ function CreateTask({ projectId }: { projectId: number }) {
         you&apos;ll bring to life! Please fill in the details below to kickstart
         your creative process.
       </p>
-
       <form>
         <div className="my-4 flex flex-col gap-2">
           <label htmlFor="name" className="text-gray-700 text-lg">
-            Task Title
+            Project Title
           </label>
           <div className="flex gap-2 border-b border-gray-200">
             <input
               type="name"
               id="name"
               name="name"
-              placeholder="Task Title"
+              placeholder="Project Title"
               value={form.name}
               onChange={(e) =>
                 setForm({ ...form, [e.target.name]: e.target.value })
@@ -65,14 +65,14 @@ function CreateTask({ projectId }: { projectId: number }) {
         </div>
         <div className="my-4 flex flex-col gap-2">
           <label htmlFor="description" className="text-gray-700 text-lg">
-            Task Description
+            Project Description
           </label>
           <div className="flex gap-2 border-b border-gray-200">
             <textarea
-              className="min-h-[80px] w-full border-gray-200 resize-none border transition focus:outline-none focus:shadow p-3"
+              className="min-h-[80px] w-full border border-gray-200 resize-none transition focus:outline-none focus:shadow p-3"
               name="description"
               id="description"
-              placeholder="Task Description"
+              placeholder="Project Description"
               value={form.description}
               cols={20}
               rows={10}
@@ -81,7 +81,6 @@ function CreateTask({ projectId }: { projectId: number }) {
               }
             />
           </div>
-
           <div onClick={handleSubmit}>
             <Button
               extraClasses={`mt-6 transition py-4 min-w-[250px] w-fit px-10 m-auto flex gap-1 justify-center ${
@@ -95,7 +94,7 @@ function CreateTask({ projectId }: { projectId: number }) {
                 <>
                   <PlusIcon width={25} />
 
-                  <p className="text-lg">Create Task</p>
+                  <p className="text-lg">Create Project</p>
                 </>
               )}
             </Button>
@@ -106,4 +105,4 @@ function CreateTask({ projectId }: { projectId: number }) {
   );
 }
 
-export default CreateTask;
+export default CreateProject;

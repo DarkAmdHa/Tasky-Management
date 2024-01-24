@@ -8,7 +8,7 @@ function page() {
   return (
     <div className="px-6 py-8 rounded-lg bg-white shadow-lg">
       <div className="mb-4">
-        <BackButton href="/dashboard" />
+        <BackButton />
       </div>
       <div className="flex flex-col mb-4 gap-2">
         <h1 className="text-2xl font-bold text-gray-700">Tasks</h1>

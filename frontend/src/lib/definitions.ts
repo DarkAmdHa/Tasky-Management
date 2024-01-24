@@ -31,7 +31,7 @@ export type LoginObject = {
 };
 
 export type projectForm = {
-  title: string;
+  name: string;
   description: string;
 };
 
