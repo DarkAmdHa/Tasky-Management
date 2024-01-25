@@ -36,11 +36,12 @@ export type projectForm = {
 };
 
 export type Comment = {
-  userId: number;
-  userName: string;
-  comment: string;
-  date: string;
-  isEdited: boolean;
+  id: number;
+  task_id: number;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+  description: string;
 };
 
 export type ProjectWithTasks = {

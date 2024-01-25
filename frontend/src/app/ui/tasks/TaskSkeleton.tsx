@@ -1,6 +1,5 @@
-import React from "react";
-// import CommentSkeleton from "../CommentSkeleton";
-// import CommentFormSkeleton from "../CommentFormSkeleton";
+import CommentFormSkeleton from "./CommentFormSkeleton";
+import CommentSkeleton from "./CommentSkeleton";
 
 function TaskSkeleton() {
   return (
@@ -10,8 +9,8 @@ function TaskSkeleton() {
       <div className="w-full h-4 bg-gray-200"></div>
       <div className="w-full h-4 bg-gray-200"></div>
       <div className="w-20 h-4 bg-gray-200"></div>
-      {/* <CommentSkeleton count={3} />
-      <CommentFormSkeleton  /> */}
+      <CommentSkeleton count={2} />
+      <CommentFormSkeleton />
     </div>
   );
 }

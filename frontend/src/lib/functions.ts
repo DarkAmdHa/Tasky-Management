@@ -155,3 +155,14 @@ export const createProject = async ({ name, description }: projectForm) => {
   );
   return resp.data;
 };
+
+export const createComment = async (taskId: number, comment: string) => {
+  const resp = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/tasks/comments`,
+    {
+      taskId,
+      commentDescription: comment,
+    }
+  );
+  return resp.data;
+};

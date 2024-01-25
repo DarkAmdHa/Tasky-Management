@@ -23,6 +23,7 @@ function Task({ id }: { id: number }) {
   useEffect(() => {
     handleLoadingTask(id);
   }, [id]);
+  debugger;
   return (
     <div>
       {isLoading ? (
@@ -47,7 +48,7 @@ function Task({ id }: { id: number }) {
                 ))
               )}
             </div>
-            <CommentInput />
+            <CommentInput taskId={id} setTask={setTask} />
           </div>
         </>
       ) : (

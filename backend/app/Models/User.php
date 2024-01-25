@@ -43,5 +43,13 @@ class User extends Authenticatable
         return $this->hasMany(Project::class);
     }
 
+    public function tasks($projectsLimit){
+        $projects = $this->projects()->latest()->paginate($projectsLimit);
+        foreach($projects as $project){
+            $project->tasks = $project->tasks()->latest()->get();
+        }
+        return $projects;
+    }
+
 
 }
