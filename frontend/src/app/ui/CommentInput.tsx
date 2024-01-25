@@ -19,15 +19,14 @@ function CommentInput({
     if (commentValue != "") {
       try {
         const submittedComment = await createComment(taskId, commentValue);
-        debugger;
-        setTask((prev) => {
-          if (prev.comments) {
-            prev.comments.push(submittedComment);
-          } else {
-            prev.comments = [];
-            prev.comments.push(submittedComment);
-          }
-          return prev;
+        setCommentValue("");
+        setTask((prevTask) => {
+          return {
+            ...prevTask,
+            comments: prevTask.comments?.length
+              ? [...prevTask.comments, submittedComment]
+              : [submittedComment],
+          };
         });
       } catch (error) {
         //TODO: Handle Error
@@ -38,6 +37,7 @@ function CommentInput({
       alert("Comment can not be empty");
     }
   };
+
   return (
     <div className="flex pt-4 gap-2 items-start justify-center">
       <Image

@@ -12,6 +12,7 @@ function Task({ id }: { id: number }) {
     setIsLoading(true);
     try {
       const { task } = await getTask(id);
+      debugger;
       setTask(task);
     } catch (e) {
       //TODO: Handle Error
@@ -23,7 +24,6 @@ function Task({ id }: { id: number }) {
   useEffect(() => {
     handleLoadingTask(id);
   }, [id]);
-  debugger;
   return (
     <div>
       {isLoading ? (
@@ -48,7 +48,7 @@ function Task({ id }: { id: number }) {
                 ))
               )}
             </div>
-            <CommentInput taskId={id} setTask={setTask} />
+            <CommentInput taskId={id} setTask={setTask} task={task} />
           </div>
         </>
       ) : (
