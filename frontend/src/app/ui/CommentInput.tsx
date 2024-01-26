@@ -6,7 +6,6 @@ import { createComment } from "@/lib/functions";
 function CommentInput({
   taskId,
   setTask,
-  task,
 }: {
   taskId: number;
   setTask: Dispatch<SetStateAction<undefined>>;
@@ -14,7 +13,7 @@ function CommentInput({
   const [isClicked, setIsClicked] = useState(false);
   const [commentValue, setCommentValue] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     if (commentValue != "") {
       try {
