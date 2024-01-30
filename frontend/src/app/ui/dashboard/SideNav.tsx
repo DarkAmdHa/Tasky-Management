@@ -42,8 +42,8 @@ function SideNav() {
       icon: DocumentDuplicateIcon,
     },
     {
-      name: "Team",
-      href: "/dashboard/team",
+      name: "Teams",
+      href: "/dashboard/teams",
       icon: RadioIcon,
     },
   ];

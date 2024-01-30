@@ -153,6 +153,20 @@ Route::middleware('auth:sanctum')->group(function(){
         }
     });
 
+    Route::post('/teams', function (Request $request){
+       $team_name = $request->input("name");
+
+       if($team_name != ''){
+            $team = new Team;
+            $team->name = $team_name;
+            $team->save();
+
+            $team->users()->attach($team->id);
+            return response()->json(["team"=>$team], Response::HTTP_OK);
+       }else{
+           return response()->json(["error"=> "Provide a name for the team"], Response::HTTP_BAD_REQUEST);
+       }
+    });
 
 
 });
