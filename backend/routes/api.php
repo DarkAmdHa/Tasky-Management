@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
@@ -284,6 +285,39 @@ Route::middleware('auth:sanctum')->group(function(){
        return response()->json(["result"=>[]], Response::HTTP_OK);
     });
 
+    Route::post('/userProfile', function (Request $request){
+        $user = Auth::user();
+
+        $validatedData = $request->validate([
+            'first_name' => 'string',
+            'last_name' => 'string',
+            'email' => 'email|unique:users,email,' . $user->id,
+            'phone' => 'string|unique:users,phone,' . $user->id,
+            'profession' => 'string',
+        ]);
+
+        $user->update($validatedData);
+
+        return response()->json(["user" => $user], Response::HTTP_OK);
+    });
+
+    Route::post('/userProfileImage', function (Request $request){
+        $user = Auth::user();
+        if ($request->hasFile('profilePic')) {
+            $file = $request->file('profilePic');
+
+            $fileName = 'avatar_' . $user->id . '.' . $file->getClientOriginalExtension();
+
+            // Store the file on the local disk
+            Storage::disk('local')->put('public/avatars/' . $fileName, file_get_contents($file));
+
+            // Update the user's avatarSrc with the new file path
+            $user->avatar_src = 'avatars/' . $fileName;
+            $user->save();
+
+            return response()->json(["user" => $user], Response::HTTP_OK);
+        }
+    });
 });
 
 

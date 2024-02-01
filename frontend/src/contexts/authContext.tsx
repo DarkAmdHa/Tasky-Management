@@ -10,7 +10,12 @@ type AuthContextType = {
 };
 
 const defaultAuthObject: AuthObject = {
-  user: {},
+  user: {
+    first_name: "",
+    last_name: "",
+    email: "",
+    profession: "",
+  },
   isLoading: false,
   isAuthenticating: false,
   isSuccess: false,
@@ -28,7 +33,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const [authObject, setAuthObject] = useState({
-    user: {},
+    user: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      profession: "",
+    },
     isLoading: true,
     isAuthenticating: false,
     isSuccess: false,

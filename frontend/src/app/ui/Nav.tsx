@@ -74,8 +74,12 @@ function Nav() {
               onMouseEnter={(e) => setHovering(true)}
               onMouseLeave={(e) => setHovering(false)}
             >
-              <Image
-                src="https://picsum.photos/100"
+              <img
+                src={
+                  authObject.user.avatar_src
+                    ? `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/storage/${authObject.user.avatar_src}`
+                    : `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/storage/img/avatar.jpg`
+                }
                 width={35}
                 height={35}
                 className="rounded-full overflow-hidden max-w-md border-2  border-slate-600"

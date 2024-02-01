@@ -166,3 +166,30 @@ export const createComment = async (taskId: number, comment: string) => {
   );
   return resp.data;
 };
+
+export const updateProfile = async (updateObj: {
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  phone?: string;
+  profession?: string;
+}) => {
+  const resp = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/userProfile`,
+    updateObj
+  );
+  return resp.data;
+};
+
+export const updateProfilePic = async (formData: FormData) => {
+  const resp = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/userProfileImage`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return resp.data;
+};

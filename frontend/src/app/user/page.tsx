@@ -7,7 +7,7 @@ function page() {
       <SideNav />
       <div className="w-full">
         <div className="p-7 gap-5 flex flex-col">
-          <div className="px-6 py-8 rounded-lg bg-white shadow-lg">
+          <div className="px-6 py-8 rounded-lg bg-white shadow-lg relative">
             <div className="max-w-4xl m-auto">
               <ProfileEdit />
             </div>

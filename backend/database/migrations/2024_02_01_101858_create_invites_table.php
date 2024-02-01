@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('invites', function (Blueprint $table) {
             $table->id();
-            $table->email("string");
-            $table->status("string")->default("pending");
+            $table->string("email");
+            $table->string("status")->default("pending");
             $table->foreignId("team_id")->nullable()->constrained("teams");
             $table->timestamps();
         });

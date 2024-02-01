@@ -1,7 +1,8 @@
+import clsx from "clsx";
 import React from "react";
 
-function Spinner() {
-  return <div className="lds-dual-ring"></div>;
+function Spinner({ customClass }: { customClass?: string }) {
+  return <div className={clsx("lds-dual-ring", customClass)}></div>;
 }
 
 export default Spinner;

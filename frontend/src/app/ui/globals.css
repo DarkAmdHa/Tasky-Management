@@ -1,6 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ff9253;
+}
+
+::-webkit-scrollbar-track {
+  background: #c7c7c7;
+}
 
 body {
   background-color: #f6f6f6;
@@ -21,6 +32,22 @@ body {
   border: 3px solid #fff;
   border-color: #fff transparent #fff transparent;
   animation: lds-dual-ring 1.2s linear infinite;
+}
+
+.lds-dual-ring.customSpinner {
+  width: 120px;
+  height: 120px;
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  z-index: 999;
+}
+
+.lds-dual-ring.customSpinner::after {
+  width: 120px;
+  height: 120px;
+  border: 8px solid #fff;
+  border-color: #ff9a60 transparent #ff9a60 transparent;
 }
 
 @keyframes lds-dual-ring {
@@ -57,4 +84,22 @@ body {
   to {
     background-position: right -40px top 0;
   }
+}
+
+.isLoadingDiv:after {
+  transition: 0.5s ease;
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  opacity: 0;
+}
+
+.isLoadingDiv.isLoading:after {
+  opacity: 1;
 }

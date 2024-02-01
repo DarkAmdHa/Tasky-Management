@@ -24,8 +24,12 @@ function UserDetails() {
             })}
           >
             <div className="rounded-full shadow-lg border-8 border-slate-100 overflow-hidden w-30 transition hover:shadow-xl">
-              <Image
-                src="https://picsum.photos/100"
+              <img
+                src={
+                  user.avatar_src
+                    ? `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/storage/${user.avatar_src}`
+                    : `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/storage/img/avatar.jpg`
+                }
                 width={100}
                 height={100}
                 className="rounded"
@@ -40,7 +44,7 @@ function UserDetails() {
             </p>
             {user.profession && (
               <p className="text-gray-500 text-sm font-semibold">
-                Front-end Developer
+                {user.profession}
               </p>
             )}
           </Link>

@@ -51,15 +51,24 @@ export type ProjectWithTasks = {
   tasks: Task[];
 };
 
+export type Team = {
+  id?: number;
+  name: string;
+};
+
 export type UserObject = {
-  id: number;
-  firstName: string;
-  lastName: string;
+  id?: number;
+  first_name: string;
+  last_name: string;
   email: string;
+  profession: string;
+  phone: string;
+  teams?: [Team];
+  avatar_src: string;
 };
 
 export type AuthObject = {
-  user: UserObject | {};
+  user: UserObject;
   isLoading: boolean;
   isAuthenticating: boolean;
   isSuccess: boolean;

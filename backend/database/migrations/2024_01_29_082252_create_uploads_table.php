@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('uploads', function (Blueprint $table) {
             $table->id();
-            $table->file_name("string");
-
+            $table->string("file_name");
             $table->foreignId("user_id")->constrained("users");
             $table->foreignId("project_id")->nullable()->constrained("projects");
             $table->timestamps();
