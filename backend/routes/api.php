@@ -3,9 +3,13 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\RegistrationController;
 use App\Models\Comment;
+use App\Models\Invite;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\Team;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
@@ -153,6 +157,7 @@ Route::middleware('auth:sanctum')->group(function(){
         }
     });
 
+    //CREATE A TEAM
     Route::post('/teams', function (Request $request){
        $team_name = $request->input("name");
 
@@ -168,6 +173,116 @@ Route::middleware('auth:sanctum')->group(function(){
        }
     });
 
+    Route::get("/teams", function(Request $request){
+        $user = Auth::user();
+
+        $teams = $user->teams();
+
+        return response()->json(["teams"=>$teams], Response::HTTP_OK);
+    });
+
+
+    Route::get("/teams/{team}", function(Request $request, Team $team){
+        if(isset($team)){
+            $max_projects = 5;
+            $user = Auth::user();
+            $isInTeam = DB::table("users_teams")->whereUserId($user->id)->whereTeamId($team->id)->count() > 0;
+
+
+            if($isInTeam){
+                $team->projects()->latest()->paginate($max_projects);
+                $team->load("users");
+                return response()->json(["team"=> $team], Response::HTTP_OK);
+            }else{
+                return response()->json(["error"=> "User not in provided team"], Response::HTTP_BAD_REQUEST);
+            }
+        }else{
+            return response()->json(["error"=> "No such team found"], Response::HTTP_BAD_REQUEST);
+        }
+    });
+
+
+    Route::post("/inviteUser", function (Request $request){
+        $validated = $request->validate([
+            'email'=>'required|email'
+        ]);
+
+        if($validated){
+            $email = $request->input("email");
+
+            $team_id = $request->input("team_id") || "";
+
+            //Check if user already in team:
+            if($team_id != "" && $user = User::where("email", $email)){
+                $isUserInTeam = DB::table("user_teams")->whereTeamId($team_id)->whereUserId($user->id)->count() > 0;
+                return response()->json(["error"=>"User with provided email already in team"], Response::HTTP_BAD_REQUEST);
+            }
+
+
+            //Create invite instance:
+            $invite = new Invite;
+            $invite->email = $email;
+            if($team_id != "")
+                $invite->team_id = $team_id;
+            //Send invite by email
+
+            $invite->save();
+            return response()->json(["success"=>"Invite sent successfully"], Response::HTTP_BAD_REQUEST);
+        }
+
+        return response()->json(["error"=>"Please provide an email"], Response::HTTP_BAD_REQUEST);
+
+    });
+
+    Route::post("/teamInviteAccept", function(Request $request){
+        $team_id = $request->input("team_id");
+        $invite_id = $request->input("invite_id");
+
+        $status = $request->input("status");
+
+        if($team_id && $invite_id && ($status && $status === Invite::STATUS_ACCEPTED || $status === Invite::STATUS_REJECTED)){
+            $user = Auth::user();
+            $team = Team::find($team_id);
+
+            $isUserInTeam = DB::table("user_teams")->whereUserId($user->id)->whereTeamId($team->id)->count() > 0;
+            if(!$isUserInTeam){
+                $invite = Invite::find($invite_id);
+                $invite->status = $status;
+                $invite->save();
+                if($status === Invite::STATUS_ACCEPTED){
+                    $team->users()->attach($user->id);
+                    return response()->json(["success"=>"User joined the team " . $team->name], Response::HTTP_OK);
+                }
+                return response()->json(["success"=>"User declined to join the team " . $team->name], Response::HTTP_OK);
+            }
+            //User already in team
+            return response()->json(["error"=>"User already in team"], Response::HTTP_BAD_REQUEST);
+        }
+
+        return response()->json(["error"=>"Invalid invite id or team id or status"], Response::HTTP_BAD_REQUEST);
+    });
+
+
+    Route::post("/search", function (Request $request){
+       $query = $request->input("query");
+       if($query){
+           $user = Auth::user();
+           //PLEASE REDO SEARCH
+           $projects = $user->projects()->where("name", "like", "%$query");
+           $tasks = Task::where("name", "like", "%$query");
+           $tasksArray = [];
+           foreach ($tasks as $task){
+               if($task->project()->user_id == $user->id)
+                   $tasksArray = $task;
+           }
+           return response()->json(["result"=>[
+               "projects"=>$projects,
+               "tasks"=>$tasksArray
+           ]], Response::HTTP_OK);
+
+       }
+       return response()->json(["result"=>[]], Response::HTTP_OK);
+    });
 
 });
 
