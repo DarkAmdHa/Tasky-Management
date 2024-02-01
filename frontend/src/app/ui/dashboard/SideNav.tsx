@@ -37,8 +37,8 @@ function SideNav() {
       icon: DevicePhoneMobileIcon,
     },
     {
-      name: "Planning",
-      href: "/dashboard/planning",
+      name: "Edit Profile",
+      href: "/dashboard/user",
       icon: DocumentDuplicateIcon,
     },
     {
