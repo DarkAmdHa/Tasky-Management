@@ -75,6 +75,18 @@ Route::middleware('auth:sanctum')->group(function(){
         }
     });
 
+    Route::get('/project-tasks/{project}', function(Request $request, Project $project){
+        $user = Auth::user();
+
+        $isInTeam = DB::table("users_teams")->whereUserId($user->id)->whereTeamId($project->team_id)->count() > 0;
+
+        if(isset($project) && ($project['user_id'] === $user['id']) || ($isInTeam)){
+            $tasks = $project->tasks()->paginate(5);
+            return response()->json(['tasks'=>$tasks], Response::HTTP_OK);
+        }else{
+            return response()->json(['error' => "Project does not belong to user or does no exist",], Response::HTTP_FORBIDDEN);
+        }
+    });
     Route::get('/tasks/{task}', function(Request $request, Task $task){
         $user = Auth::user();
 
@@ -176,8 +188,9 @@ Route::middleware('auth:sanctum')->group(function(){
 
     Route::get("/teams", function(Request $request){
         $user = Auth::user();
+        $teamsLimit = 5;
 
-        $teams = $user->teams();
+        $teams = $user->teams()->latest()->paginate($teamsLimit);
 
         return response()->json(["teams"=>$teams], Response::HTTP_OK);
     });
@@ -191,7 +204,7 @@ Route::middleware('auth:sanctum')->group(function(){
 
 
             if($isInTeam){
-                $team->projects()->latest()->paginate($max_projects);
+                $team->projects = $team->projects()->latest()->paginate($max_projects);
                 $team->load("users");
                 return response()->json(["team"=> $team], Response::HTTP_OK);
             }else{
@@ -268,19 +281,14 @@ Route::middleware('auth:sanctum')->group(function(){
        $query = $request->input("query");
        if($query){
            $user = Auth::user();
-           //PLEASE REDO SEARCH
-           $projects = $user->projects()->where("name", "like", "%$query");
-           $tasks = Task::where("name", "like", "%$query");
-           $tasksArray = [];
-           foreach ($tasks as $task){
-               if($task->project()->user_id == $user->id)
-                   $tasksArray = $task;
-           }
+           $projects = Project::search($user->id, $query)->latest()->take(10)->get();
+           $tasks = Task::search($user->id, $query)->latest()->take(10)->get();
+           $teams = Team::search($user->id, $query)->latest()->take(10)->get();
            return response()->json(["result"=>[
                "projects"=>$projects,
-               "tasks"=>$tasksArray
+               "tasks"=>$tasks,
+               "teams"=>$teams
            ]], Response::HTTP_OK);
-
        }
        return response()->json(["result"=>[]], Response::HTTP_OK);
     });
@@ -302,8 +310,8 @@ Route::middleware('auth:sanctum')->group(function(){
     });
 
     Route::post('/userProfileImage', function (Request $request){
-        $user = Auth::user();
         if ($request->hasFile('profilePic')) {
+            $user = Auth::user();
             $file = $request->file('profilePic');
 
             $fileName = 'avatar_' . $user->id . '.' . $file->getClientOriginalExtension();

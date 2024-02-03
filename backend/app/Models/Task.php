@@ -11,7 +11,19 @@ class Task extends Model
 
     protected $guarded = [];
 
-
+    public static function search($userId, $query) {
+        return empty($query) ?static::query() : static::query()
+            ->where('name', 'like', '%' . $query . '%')
+            ->orWhere("description",'like', '%' . $query . '%')
+            ->where(function ($q) use ($userId) {
+                $q->whereHas('project', function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                })
+                ->orWhereHas('project.team.users', function ($q) use ($userId) {
+                    $q->where('users.id', $userId);
+                });
+            });
+    }
 
     public function project(){
         return $this->belongsTo(Project::class);

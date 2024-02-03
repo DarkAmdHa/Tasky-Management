@@ -43,6 +43,17 @@ class User extends Authenticatable
         return $this->hasMany(Project::class);
     }
 
+    public function teamProjects(){
+       $teams = $this->teams();
+        $projects= [];
+       foreach($teams as $team){
+           foreach($team->projects as $pr){
+               $projects[] = $pr;
+           }
+       }
+       return $projects;
+    }
+
     public function tasks($projectsLimit){
         $projects = $this->projects()->latest()->paginate($projectsLimit);
         foreach($projects as $project){
@@ -53,7 +64,7 @@ class User extends Authenticatable
 
 
     public function teams(){
-        return $this->belongsToMany(Team::class,'users_teams','team_id', 'user_id' );
+        return $this->belongsToMany(Team::class,'users_teams','user_id', 'team_id' );
     }
 
 

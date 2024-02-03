@@ -11,11 +11,19 @@ class Team extends Model
 
     protected $guarded = [];
 
+    public static function search($userId, $query){
+        return empty($query) ? static::query() :
+            static::query()->where("name", "like", "%".$query . "%")
+            ->whereHas("users", function($q) use ($userId){
+                $q->where("users.id", $userId);
+            });
+    }
+
     public function projects(){
         return $this->hasMany(Project::class);
     }
 
     public function users(){
-        return $this->belongsToMany(User::class, 'users_teams', 'user_id', 'team_id');
+        return $this->belongsToMany(User::class, 'users_teams', 'team_id', 'user_id');
     }
 }
