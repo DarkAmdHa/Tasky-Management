@@ -29,7 +29,7 @@ function LoginForm() {
   const { authObject, setAuthObject } = useContext(AuthContext);
   const router = useRouter();
   useEffect(() => {
-    if (Object.keys(authObject.user).length) {
+    if (authObject.user["email"]) {
       router.push("/dashboard");
     }
   }, [authObject]);

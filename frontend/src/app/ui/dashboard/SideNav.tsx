@@ -58,7 +58,17 @@ function SideNav() {
       setIsSaving(true);
       try {
         await logoutUser();
-        setAuthObject({ ...authObject, user: {} });
+        setAuthObject({
+          ...authObject,
+          user: {
+            first_name: "",
+            last_name: "",
+            email: "",
+            profession: "",
+            phone: "",
+            avatar_src: "",
+          },
+        });
         router.push("/");
       } catch (e) {
         alert("Something went wrong!");

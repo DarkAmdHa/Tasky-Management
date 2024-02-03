@@ -11,7 +11,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
         <div className="p-7 gap-5 flex flex-col">
           <div className="flex justify-between items-center">
             <UserDetails />
-            <div className="flex gap-4 h-fit">
+            <div className="flex gap-4 h-fit w-4/12">
               <NotificationBell />
               <SearchBar />
             </div>

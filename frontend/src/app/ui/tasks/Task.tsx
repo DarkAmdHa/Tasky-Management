@@ -4,15 +4,15 @@ import TaskSkeleton from "./TaskSkeleton";
 import { getTask } from "@/lib/functions";
 import CommentInput from "../CommentInput";
 import Comment from "../Comment";
+import { Task } from "@/lib/definitions";
 function Task({ id }: { id: number }) {
-  const [task, setTask] = useState();
+  const [task, setTask] = useState<Task>();
   const [isLoading, setIsLoading] = useState(true);
 
   const handleLoadingTask = async (id: number) => {
     setIsLoading(true);
     try {
       const { task } = await getTask(id);
-      debugger;
       setTask(task);
     } catch (e) {
       //TODO: Handle Error
@@ -44,7 +44,7 @@ function Task({ id }: { id: number }) {
                 </p>
               ) : (
                 task.comments.map((comment) => (
-                  <Comment key={comment.userId} comment={comment} />
+                  <Comment key={comment.user_id} comment={comment} />
                 ))
               )}
             </div>

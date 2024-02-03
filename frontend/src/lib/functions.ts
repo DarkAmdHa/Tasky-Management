@@ -193,3 +193,33 @@ export const updateProfilePic = async (formData: FormData) => {
   );
   return resp.data;
 };
+
+export const search = async (query: string) => {
+  const resp = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/search`,
+    { query }
+  );
+
+  return resp.data;
+};
+
+export const getTeams = async (page: Number) => {
+  const resp = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/teams?page=${page}`
+  );
+  return resp.data;
+};
+
+export const getTeamWithUsers = async (teamId: number) => {
+  const resp = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/teams/${teamId}`
+  );
+  return resp.data;
+};
+
+export const getPaginatedTasks = async (projectId: number, page: number) => {
+  const resp = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/project-tasks/${projectId}?page=${page}`
+  );
+  return resp.data;
+};

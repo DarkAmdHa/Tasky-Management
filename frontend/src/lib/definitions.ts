@@ -8,6 +8,8 @@ export type Project = {
 export type Task = {
   id: number;
   name: string;
+  description: string;
+  comments: Comment[];
   status: string;
 };
 
@@ -42,6 +44,7 @@ export type Comment = {
   created_at: string;
   updated_at: string;
   description: string;
+  user: { avatar_src: string };
 };
 
 export type ProjectWithTasks = {
@@ -54,6 +57,15 @@ export type ProjectWithTasks = {
 export type Team = {
   id?: number;
   name: string;
+  projects: Project[];
+  users: UserObject[];
+};
+
+export type SearchResults = {
+  isLoading: Boolean;
+  projects: Project[];
+  tasks: Task[];
+  teams: Team[];
 };
 
 export type UserObject = {

@@ -6,7 +6,11 @@ function Comment({ comment }: { comment: Comment }) {
     <div className="bg-tertiary p-4 shadow rounded  relative">
       <div className="flex gap-2 items-center cursor-pointer w-fit">
         <Image
-          src="https://picsum.photos/100"
+          src={
+            comment.user.avatar_src
+              ? `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/storage/${comment.user.avatar_src}`
+              : `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/storage/img/avatar.jpg`
+          }
           width={35}
           height={35}
           className="rounded-full overflow-hidden max-w-md border-2  border-slate-600"

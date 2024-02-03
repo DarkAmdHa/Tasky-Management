@@ -11,7 +11,7 @@ import { logoutUser } from "@/lib/functions";
 function Nav() {
   const { authObject, setAuthObject } = useContext(AuthContext);
 
-  const isLoggedIn = Object.keys(authObject.user).length ? true : false;
+  const isLoggedIn = authObject.user["email"];
   const links = [
     {
       name: "Pricing",
@@ -29,7 +29,17 @@ function Nav() {
   const handleLogout = async () => {
     try {
       await logoutUser();
-      setAuthObject({ ...authObject, user: {} });
+      setAuthObject({
+        ...authObject,
+        user: {
+          first_name: "",
+          last_name: "",
+          email: "",
+          profession: "",
+          phone: "",
+          avatar_src: "",
+        },
+      });
       router.push("/");
     } catch (e) {
       alert("Something went wrong!");
