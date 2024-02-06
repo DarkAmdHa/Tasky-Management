@@ -21,6 +21,7 @@ function ProfileEdit() {
     email: user.email,
     phone: user.phone,
     profession: user.profession,
+    avatar_src: user.avatar_src,
   });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -59,6 +60,7 @@ function ProfileEdit() {
       email: user.email,
       phone: user.phone,
       profession: user.profession,
+      avatar_src: user.avatar_src,
     });
     setTimeout(() => {
       setIsLoading(false);
@@ -227,6 +229,7 @@ function ProfileEdit() {
       email: user.email,
       phone: user.phone,
       profession: user.profession || "",
+      avatar_src: user.avatar_src || "",
     });
   }
 

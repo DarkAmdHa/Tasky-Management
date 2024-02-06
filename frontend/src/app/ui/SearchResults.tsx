@@ -8,7 +8,7 @@ import TeamsSearchResult from "./Search/TeamsSearchResult";
 
 function SearchResults({ results }: { results: SearchResults }) {
   return (
-    <div className="absolute top-full bg-white w-full shadow-lg flex flex-col gap-2 max-h-[600px] overflow-auto">
+    <div className="hidden absolute top-full bg-white w-full shadow-lg flex flex-col gap-2 max-h-[600px] overflow-auto">
       {results.isLoading ? (
         <Spinner />
       ) : (

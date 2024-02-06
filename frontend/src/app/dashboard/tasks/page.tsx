@@ -1,7 +1,5 @@
 import React from "react";
-import TaskCard from "@/app/ui/TaskCard";
 import BackButton from "@/app/ui/BackButton";
-import TasksColumn from "@/app/ui/TasksColumn";
 import AllTasks from "@/app/ui/tasks/AllTasks";
 
 function page() {

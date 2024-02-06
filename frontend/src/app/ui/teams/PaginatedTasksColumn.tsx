@@ -11,13 +11,17 @@ function PaginatedTasksColumn({ project }: { project: Project }) {
   const [lastPage, setLastPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
-  const scrollableDivRef = useRef(null);
+  const scrollableDivRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const getTasks = async (projectId: number) => {
       try {
         const { tasks } = await getPaginatedTasks(projectId, page);
-        setTasks((prevTasks) => [...prevTasks, ...tasks.data]);
+        if (page > 1) {
+          setTasks((prevTasks) => [...prevTasks, ...tasks.data]);
+        } else {
+          setTasks(tasks.data);
+        }
         setLastPage(tasks.last_page);
       } catch (e) {
         //TODO: HANDLE ERROR
@@ -31,6 +35,7 @@ function PaginatedTasksColumn({ project }: { project: Project }) {
   useEffect(() => {
     const onScroll = () => {
       const el = scrollableDivRef.current;
+      if (!el) return;
 
       if (el && el.scrollHeight - el.scrollTop <= el.clientHeight + 10) {
         if (lastPage > 1 && page !== lastPage) {
@@ -49,13 +54,16 @@ function PaginatedTasksColumn({ project }: { project: Project }) {
   return (
     <div
       ref={scrollableDivRef}
-      className="flex border border-gray rounded p-4 min-w-[340px] shadow max-h-[400px] overflow-auto"
+      className="flex border border-gray rounded basis-1/3 shrink-0 shadow max-h-[400px] overflow-auto flex-col"
     >
+      <Link
+        href={`/dashboard/projects/${project.id}`}
+        className="p-4 sticky top-0 bg-white shadow"
+      >
+        <p className="text-xl font-semibold">{project.name} Tasks</p>
+      </Link>
       <div className="flex flex-col gap-4 w-full">
-        <Link href={`/dashboard/projects/${project.id}`}>
-          <p className="text-xl font-semibold">{project.name} Tasks</p>
-        </Link>
-        <div className="flex flex-col gap-4 pb-4">
+        <div className="flex flex-col gap-4 p-4">
           {isLoading ? (
             <Spinner customClass="regularSpinner" />
           ) : (

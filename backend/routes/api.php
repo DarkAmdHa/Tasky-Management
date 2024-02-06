@@ -172,14 +172,20 @@ Route::middleware('auth:sanctum')->group(function(){
 
     //CREATE A TEAM
     Route::post('/teams', function (Request $request){
+        $user = Auth::user();
        $team_name = $request->input("name");
+       $team_description = $request->input("description");
 
        if($team_name != ''){
             $team = new Team;
             $team->name = $team_name;
+            if($team_description != ""){
+                $team->description = $team_description;
+            }
             $team->save();
 
-            $team->users()->attach($team->id);
+            $team->users()->attach($user->id, ["isTeamAdmin"=> 1]);
+
             return response()->json(["team"=>$team], Response::HTTP_OK);
        }else{
            return response()->json(["error"=> "Provide a name for the team"], Response::HTTP_BAD_REQUEST);
@@ -198,12 +204,13 @@ Route::middleware('auth:sanctum')->group(function(){
 
     Route::get("/teams/{team}", function(Request $request, Team $team){
         if(isset($team)){
-            $max_projects = 5;
+            $max_projects = 4;
             $user = Auth::user();
             $isInTeam = DB::table("users_teams")->whereUserId($user->id)->whereTeamId($team->id)->count() > 0;
 
 
             if($isInTeam){
+                //
                 $team->projects = $team->projects()->latest()->paginate($max_projects);
                 $team->load("users");
                 return response()->json(["team"=> $team], Response::HTTP_OK);

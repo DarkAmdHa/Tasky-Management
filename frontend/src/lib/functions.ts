@@ -210,9 +210,9 @@ export const getTeams = async (page: Number) => {
   return resp.data;
 };
 
-export const getTeamWithUsers = async (teamId: number) => {
+export const getTeamWithUsers = async (teamId: number, page: number) => {
   const resp = await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/teams/${teamId}`
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/teams/${teamId}?page=${page}`
   );
   return resp.data;
 };
@@ -220,6 +220,23 @@ export const getTeamWithUsers = async (teamId: number) => {
 export const getPaginatedTasks = async (projectId: number, page: number) => {
   const resp = await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/project-tasks/${projectId}?page=${page}`
+  );
+  return resp.data;
+};
+
+export const createTeam = async ({
+  name,
+  description,
+}: {
+  name: string;
+  description: string;
+}) => {
+  const resp = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/teams`,
+    {
+      name,
+      description,
+    }
   );
   return resp.data;
 };

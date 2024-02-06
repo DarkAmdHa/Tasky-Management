@@ -57,8 +57,8 @@ body {
 }
 
 .lds-dual-ring.regularSpinner::after {
-  width: 100%;
-  height: 100%;
+  width: 40px;
+  height: 40px;
   border: 6px solid #fff;
   border-color: #ff9a60 transparent #ff9a60 transparent;
 }

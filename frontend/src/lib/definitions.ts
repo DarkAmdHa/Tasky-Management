@@ -1,3 +1,10 @@
+export type PaginationObject<T> = {
+  current_page?: number;
+  first_page_url?: string;
+  from?: number;
+  last_page?: number;
+  data: T[];
+};
 export type Project = {
   id: number;
   name: string;
@@ -57,7 +64,7 @@ export type ProjectWithTasks = {
 export type Team = {
   id?: number;
   name: string;
-  projects: Project[];
+  projects: PaginationObject<Project>;
   users: UserObject[];
 };
 
