@@ -240,3 +240,14 @@ export const createTeam = async ({
   );
   return resp.data;
 };
+
+export const inviteUser = async (email: string, team_id: number) => {
+  const resp = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/inviteUser`,
+    {
+      email,
+      team_id,
+    }
+  );
+  return resp.data;
+};

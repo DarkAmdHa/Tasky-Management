@@ -9,6 +9,7 @@ import axios from "axios";
 import { UserObject } from "@/lib/definitions";
 import clsx from "clsx";
 import Spinner from "../Spinner";
+import { validateData } from "@/lib/utils";
 
 function ProfileEdit() {
   const { authObject, setAuthObject } = useContext(AuthContext);
@@ -67,76 +68,6 @@ function ProfileEdit() {
     }, 1000);
   }, [user]);
 
-  //Validation:
-  const validateData = (fieldsToValidate: string[]) => {
-    let errors: Record<string, string[]> = {
-      email: [],
-      phone: [],
-      first_name: [],
-      last_name: [],
-      profession: [],
-    };
-
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-    if (fieldsToValidate.includes("email")) {
-      const parts = form.email.split("@");
-      const domainParts = parts[1]?.split(".");
-      if (
-        !form.email.includes("@") ||
-        parts.length !== 2 ||
-        domainParts.length < 2 ||
-        domainParts.some((part: string) => part === "") ||
-        !emailRegex.test(form.email)
-      ) {
-        errors.email.push("Please provide a valid email");
-      }
-    }
-
-    const phoneRegex = /^\+(?:[0-9] ?){6,14}[0-9]$/;
-    if (fieldsToValidate.includes("phone")) {
-      if (!phoneRegex.test(form.phone)) {
-        errors.phone.push("Please provide a valid phone number");
-      }
-    }
-
-    if (fieldsToValidate.includes("first_name")) {
-      if (form.first_name.length < 2) {
-        errors.first_name.push(
-          "Please provide a first name of more than 2 characters"
-        );
-      }
-    }
-
-    if (fieldsToValidate.includes("last_name")) {
-      if (form.last_name.length < 2) {
-        errors.last_name.push(
-          "Please provide a last name of more than 2 characters"
-        );
-      }
-    }
-
-    //If errors found
-    if (Object.keys(errors).find((key: string) => errors[key].length > 0)) {
-      // Clear previous timeout
-      if (errorsClearTimeoutRef.current) {
-        clearTimeout(errorsClearTimeoutRef.current);
-      }
-      setFormErrors(errors);
-      errorsClearTimeoutRef.current = setTimeout(() => {
-        setFormErrors({
-          email: [],
-          phone: [],
-          first_name: [],
-          last_name: [],
-          profession: [],
-        });
-      }, 5000);
-      return false;
-    }
-    return true;
-  };
-
   function resetEmail() {
     // Reset the email field to the user's email
     setForm({ ...form, email: user.email });
@@ -144,7 +75,7 @@ function ProfileEdit() {
   }
   async function handleEmailChange() {
     //Email Update:
-    if (validateData(["email"])) {
+    if (validateData(["email"], form, errorsClearTimeoutRef, setFormErrors)) {
       //Set Loading
       setIsLoading(true);
 
@@ -184,7 +115,7 @@ function ProfileEdit() {
   }
   async function handlePhoneChange() {
     //Phone  Update:
-    if (validateData(["phone"])) {
+    if (validateData(["phone"], form, errorsClearTimeoutRef, setFormErrors)) {
       //Set Loading
       setIsLoading(true);
 
@@ -235,7 +166,14 @@ function ProfileEdit() {
 
   async function handleSubmit() {
     //Handle Submit
-    if (validateData(["first_name", "last_name"])) {
+    if (
+      validateData(
+        ["first_name", "last_name"],
+        form,
+        errorsClearTimeoutRef,
+        setFormErrors
+      )
+    ) {
       //Set Loading
       setIsLoading(true);
 

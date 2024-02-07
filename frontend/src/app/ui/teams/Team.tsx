@@ -5,6 +5,8 @@ import TeamSkeleton from "./TeamSkeleton";
 import { Team } from "@/lib/definitions";
 import PaginatedTasksColumn from "./PaginatedTasksColumn";
 import Spinner from "../Spinner";
+import Link from "next/link";
+import InviteModal from "./InviteModal";
 
 function Team({ id }: { id: number }) {
   const [teamObject, setTeamObject] = useState<Team>({
@@ -67,6 +69,16 @@ function Team({ id }: { id: number }) {
       return () => el.removeEventListener("scroll", onScroll);
     }
   }, [lastProjectPage, projectPage]);
+
+  const [renderModal, setRenderModal] = useState(false);
+
+  const showInviteModal = () => {
+    setRenderModal(true);
+  };
+
+  const closeModal = () => {
+    setRenderModal(false);
+  };
   return (
     <div>
       {isLoading ? (
@@ -98,8 +110,25 @@ function Team({ id }: { id: number }) {
                   <p className="text-sm ">{user.first_name}</p>
                 </div>
               ))}
+              <div
+                onClick={showInviteModal}
+                className="flex flex-col justify-center text-center items-center cursor-pointer gap-2"
+              >
+                <div className="rounded-full shadow-lg border-4 border-slate-100 overflow-hidden w-14 h-14 transition hover:shadow-xl ">
+                  <div className="rounded w-full h-full bg-gray-200 flex items-center justify-center text-xl text-primary">
+                    +
+                  </div>
+                </div>
+                <p className="text-sm text-primary w-16 m-auto">Invite Users</p>
+              </div>
             </div>
           </div>
+
+          {renderModal ? (
+            <InviteModal onClose={closeModal} teamId={id} />
+          ) : (
+            <></>
+          )}
 
           {teamObject.projects.data.length ? (
             <div className="flex flex-col gap-5">

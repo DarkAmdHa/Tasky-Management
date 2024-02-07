@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\InviteEmailController;
 use App\Http\Controllers\RegistrationController;
 use App\Models\Comment;
 use App\Models\Invite;
@@ -228,16 +229,24 @@ Route::middleware('auth:sanctum')->group(function(){
             'email'=>'required|email'
         ]);
 
+        $inviter = Auth::user();
+
         if($validated){
             $email = $request->input("email");
 
             $team_id = $request->input("team_id") || "";
 
+            //Check if there's already a pending invite for this user and this team
+            if(Invite::where('team_id', $team_id)->where("email", $email)->where("status", "pending")->count()){
+                return response()->json(["error"=>"This user already has a pending invite for this team."], Response::HTTP_BAD_REQUEST);
+            }
+
             //Check if user already in team:
-            if($team_id != "" && $user = User::where("email", $email)){
-                $isUserInTeam = DB::table("user_teams")->whereTeamId($team_id)->whereUserId($user->id)->count() > 0;
+            if($team_id != "" && $user = User::where("email", $email)->first()){
+                $isUserInTeam = DB::table("users_teams")->where("team_id", $team_id)->where("user_id", $user->id)->count() > 0;
                 return response()->json(["error"=>"User with provided email already in team"], Response::HTTP_BAD_REQUEST);
             }
+
 
 
             //Create invite instance:
@@ -248,7 +257,16 @@ Route::middleware('auth:sanctum')->group(function(){
             //Send invite by email
 
             $invite->save();
-            return response()->json(["success"=>"Invite sent successfully"], Response::HTTP_BAD_REQUEST);
+
+            $inviteEmail = new InviteEmailController();
+            if($team_id){
+                $team = Team::find($team_id)->name;
+            }else{
+                $team = "";
+            }
+
+            $inviteEmail->sendInviteEmail($inviter->first_name . " " . $inviter->last_name, $email, $team,$user ? true : false );
+            return response()->json(["success"=>"Invite sent successfully"], Response::HTTP_OK);
         }
 
         return response()->json(["error"=>"Please provide an email"], Response::HTTP_BAD_REQUEST);
