@@ -82,16 +82,6 @@ function InviteModal({
     }, 100);
   }, []);
 
-  const closeModal = () => {
-    setModalShow(false);
-    setTimeout(() => {
-      setIsOpen(false);
-      setTimeout(() => {
-        onClose();
-      }, 500);
-    }, 500);
-  };
-
   return (
     <div
       className={clsx([
