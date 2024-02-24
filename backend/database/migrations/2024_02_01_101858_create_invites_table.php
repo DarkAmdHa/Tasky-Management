@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('invites', function (Blueprint $table) {
             $table->id();
             $table->string("email");
+            $table->string("invited_by");
             $table->string("status")->default("pending");
             $table->foreignId("team_id")->nullable()->constrained("teams");
             $table->timestamps();

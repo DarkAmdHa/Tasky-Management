@@ -2,13 +2,13 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\InviteEmailController;
-use App\Http\Controllers\RegistrationController;
 use App\Models\Comment;
 use App\Models\Invite;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +26,11 @@ use Illuminate\Support\Facades\Auth;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/user', function(Request $request){
         return $request->user();
@@ -56,11 +61,11 @@ Route::middleware('auth:sanctum')->group(function(){
     });
 
     Route::get('/tasks', function(Request $request){
-       $projectsLimit = 5;
+        $projectsLimit = 5;
 
-       $user = Auth::user();
+        $user = Auth::user();
 
-       $tasks = $user->tasks($projectsLimit);
+        $tasks = $user->tasks($projectsLimit);
         return response()->json(["paginatedProjectsWithTasks"=>$tasks]);
     });
 
@@ -174,10 +179,10 @@ Route::middleware('auth:sanctum')->group(function(){
     //CREATE A TEAM
     Route::post('/teams', function (Request $request){
         $user = Auth::user();
-       $team_name = $request->input("name");
-       $team_description = $request->input("description");
+        $team_name = $request->input("name");
+        $team_description = $request->input("description");
 
-       if($team_name != ''){
+        if($team_name != ''){
             $team = new Team;
             $team->name = $team_name;
             if($team_description != ""){
@@ -188,9 +193,9 @@ Route::middleware('auth:sanctum')->group(function(){
             $team->users()->attach($user->id, ["isTeamAdmin"=> 1]);
 
             return response()->json(["team"=>$team], Response::HTTP_OK);
-       }else{
-           return response()->json(["error"=> "Provide a name for the team"], Response::HTTP_BAD_REQUEST);
-       }
+        }else{
+            return response()->json(["error"=> "Provide a name for the team"], Response::HTTP_BAD_REQUEST);
+        }
     });
 
     Route::get("/teams", function(Request $request){
@@ -252,6 +257,7 @@ Route::middleware('auth:sanctum')->group(function(){
             //Create invite instance:
             $invite = new Invite;
             $invite->email = $email;
+            $invite->invited_by = $user->email;
             if($team_id != "")
                 $invite->team_id = $team_id;
             //Send invite by email
@@ -303,19 +309,19 @@ Route::middleware('auth:sanctum')->group(function(){
 
 
     Route::post("/search", function (Request $request){
-       $query = $request->input("query");
-       if($query){
-           $user = Auth::user();
-           $projects = Project::search($user->id, $query)->latest()->take(10)->get();
-           $tasks = Task::search($user->id, $query)->latest()->take(10)->get();
-           $teams = Team::search($user->id, $query)->latest()->take(10)->get();
-           return response()->json(["result"=>[
-               "projects"=>$projects,
-               "tasks"=>$tasks,
-               "teams"=>$teams
-           ]], Response::HTTP_OK);
-       }
-       return response()->json(["result"=>[]], Response::HTTP_OK);
+        $query = $request->input("query");
+        if($query){
+            $user = Auth::user();
+            $projects = Project::search($user->id, $query)->latest()->take(10)->get();
+            $tasks = Task::search($user->id, $query)->latest()->take(10)->get();
+            $teams = Team::search($user->id, $query)->latest()->take(10)->get();
+            return response()->json(["result"=>[
+                "projects"=>$projects,
+                "tasks"=>$tasks,
+                "teams"=>$teams
+            ]], Response::HTTP_OK);
+        }
+        return response()->json(["result"=>[]], Response::HTTP_OK);
     });
 
     Route::post('/userProfile', function (Request $request){
@@ -351,13 +357,38 @@ Route::middleware('auth:sanctum')->group(function(){
             return response()->json(["user" => $user], Response::HTTP_OK);
         }
     });
+
+    Route::get("/pendingInvites", function(Request $request){
+        $user = Auth::user();
+        $pendingInvites = [];
+
+        $invites = Invite::where("email", $user->email)->where("status", "pending")->get();
+        if(!$invites->isEmpty()){
+            foreach($invites as $invite){
+                if($invite->team_id != ""){
+                    $createdAtTimeStamp = Carbon::parse($invite->created_at);
+                    $currentTimestamp = Carbon::now();
+
+                    if($createdAtTimeStamp->diffInHours($currentTimestamp) < 48){
+                        $invite->load("team");
+                        $inviter = User::where("email", $invite->invited_by);
+                        if(!isset($inviter)){
+                            $invite->invited_by_name = $inviter->first_name . " " . $inviter->last_name;
+                            $invite->invited_by_img = $inviter->avatar_src;
+                        }
+
+                        $pendingInvites[] = $invite;
+                    }
+                }
+            }
+        }
+
+        return response()->json([
+            'pendingInvites'=>$pendingInvites
+        ], Response::HTTP_OK);
+    });
 });
 
-
-
-
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
 
 
 

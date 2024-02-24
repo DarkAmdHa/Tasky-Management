@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useState, useEffect } from "react";
 import { AuthObject, UserObject } from "@/lib/definitions";
-import { getUser } from "@/lib/functions";
+import { getPendingInvites, getUser } from "@/lib/functions";
 import { useRouter, usePathname } from "next/navigation";
 
 type AuthContextType = {
@@ -18,6 +18,7 @@ const defaultAuthObject: AuthObject = {
     phone: "",
     avatar_src: "",
   },
+  pendingInvites: [],
   isLoading: false,
   isAuthenticating: false,
   isSuccess: false,
@@ -43,6 +44,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       phone: "",
       avatar_src: "",
     },
+  pendingInvites: [],
+
     isLoading: true,
     isAuthenticating: false,
     isSuccess: false,
@@ -56,7 +59,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const user = await getUser();
         if (user) {
-          setAuthObject({ ...authObject, user, isLoading: false });
+          const pendingInvites = await getPendingInvites();
+          setAuthObject({ ...authObject, user,pendingInvites, isLoading: false });
         } else {
           setAuthObject({ ...authObject, isLoading: false });
           if (pathname.startsWith("/dashboard")) {

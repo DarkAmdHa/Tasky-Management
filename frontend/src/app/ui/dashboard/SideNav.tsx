@@ -5,6 +5,7 @@ import {
   DocumentDuplicateIcon,
   DevicePhoneMobileIcon,
   RadioIcon,
+  ReceiptPercentIcon
 } from "@heroicons/react/24/outline";
 
 import Link from "next/link";
@@ -46,6 +47,11 @@ function SideNav() {
       href: "/dashboard/teams",
       icon: RadioIcon,
     },
+    {
+      name: "Pending Invites",
+      href: "/dashboard/invites",
+      icon: ReceiptPercentIcon,
+    }
   ];
 
   const [isSaving, setIsSaving] = useState(false);

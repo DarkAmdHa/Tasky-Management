@@ -27,19 +27,23 @@ class AuthController extends Controller
         $invite = Invite::where("email", $user->email)->where("status", "pending")->first();
         if($invite){
             if($invite->team_id != ""){
-                $createdAtTimeStamp = Carbon::parse($invite->created_at);
-                $currentTimestamp = Carbon::now();
+                //$createdAtTimeStamp = Carbon::parse($invite->created_at);
+                //$currentTimestamp = Carbon::now();
 
-                if($createdAtTimeStamp->diffInHours($currentTimestamp) > 48){
-                    $invite->load("team");
-                    return response()->json([
-                        'user'=>$user,
-                        'pendingInvite'=>$invite
-                    ], Response::HTTP_OK);
-                }
+                //More than 48 hours, the invites expires
+                //if($createdAtTimeStamp->diffInHours($currentTimestamp) < 48){
+                $invite->load("team");
+                return response()->json([
+                    'user'=>$user,
+                    'pendingInvite'=>$invite
+                ], Response::HTTP_OK);
+                //}
+            }else{
+                //Normal invite
+                $invite->status = "accepted";
+                $invite->save();
             }
-            $invite->status = "accepted";
-            $invite->save();
+
         }
 
 

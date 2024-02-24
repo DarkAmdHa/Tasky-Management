@@ -20,18 +20,15 @@
 
     @else
         <p>
-            <strong>{{$inviter}}</strong> would like to invite you to join the TaskyTasky!
-        </p>
-        <p>
-            Click on the button below to join TaskyTasky!
+            <strong>{{$inviter}}</strong> would like to invite you to join the TaskyTasky platform!
         </p>
     @endif
 
 <a href="
     @if($isUser)
-        http://localhost:3000/login
+        http://localhost:3000/login?user={{$invitee}}
     @else
-        http://localhost:3000/register
+        http://localhost:3000/register?user={{$invitee}}
     @endif
 " style="padding: 5px 20px;background:orange;color:#fff;font-weight:bold;display:flex;border-radius:25px;width: fit-content;cursor: pointer;">Join</a>
 </body>

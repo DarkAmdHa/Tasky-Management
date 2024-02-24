@@ -21,7 +21,7 @@ export const registerUser = async (form: RegisterObject) => {
     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/register`,
     form
   );
-  return resp.data.user;
+  return resp.data;
   // Fetch XSRF token
 };
 
@@ -31,8 +31,27 @@ export const loginUser = async (form: LoginObject) => {
     `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/login`,
     form
   );
-  return resp.data.user;
+  return resp.data;
 };
+
+export const getPendingInvites = async () => {
+  await getXSRFToken();
+  const resp = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/pendingInvites`
+  );
+  return resp.data.pendingInvites;
+};
+
+export const handleInvite =async (team_id: number, invite_id: number, status: "Accepted" | "Rejected") => {
+  await getXSRFToken();
+  const resp = await axios.post(
+    `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/teamInviteAccept`,
+    {
+      team_id, invite_id, status
+    }
+  );
+  return resp.data;
+}
 
 export const getXSRFToken = () => {
   try {

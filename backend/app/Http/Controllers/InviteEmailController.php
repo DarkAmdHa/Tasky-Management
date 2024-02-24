@@ -10,7 +10,7 @@ class InviteEmailController extends Controller
 {
     public function sendInviteEmail(string $inviter, string $invitee, string $team, bool $isUser)
     {
-        Mail::to($invitee)->send(new InviteUser( $inviter, $team, $isUser));
+        Mail::to($invitee)->send(new InviteUser( $inviter, $team, $isUser,$invitee));
 
         return "Email sent successfully!";
     }

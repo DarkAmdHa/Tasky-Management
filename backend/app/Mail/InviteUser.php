@@ -16,7 +16,7 @@ class InviteUser extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(private string $inviter, private string $team, private bool $isUser)
+    public function __construct(private string $inviter, private string $team, private bool $isUser, private string $invitee)
     {
         //
     }
@@ -41,7 +41,8 @@ class InviteUser extends Mailable
             with: [
                 'isUser' => $this->isUser,
                 'inviter' => $this->inviter,
-                'team'=>$this->team
+                'team'=>$this->team,
+                'invitee'=>$this->invitee
             ],
         );
     }

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useContext } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import {
   UserIcon,
   LockClosedIcon,
@@ -11,9 +11,11 @@ import Spinner from "@/app/ui/Spinner";
 import { registerUser } from "@/lib/functions";
 import axios from "axios";
 import { AuthContext } from "@/contexts/authContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import clsx from "clsx";
 
 function RegisterForm() {
+  const searchParams = useSearchParams();
   const router = useRouter();
   const [form, setForm] = useState({
     email: "",
@@ -28,11 +30,29 @@ function RegisterForm() {
     last_name: [],
   };
 
+  const [isEmailFormDisabled, setIsEmailFormDisabled] = useState(false);
+
+
   // Use a ref to store the timeout ID
   const errorsClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Get authObject from context
   const { authObject, setAuthObject } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (authObject.user["email"]) {
+      router.push("/dashboard");
+    }
+  }, [authObject]);
+
+  //Check if user in url, in which case set a disabled user field (since it's by invite)
+  useEffect(()=>{
+    const userByInvite = searchParams.get("user");
+    if(userByInvite && userByInvite!=""){
+      setForm(prev=>({...prev, email: userByInvite}));
+      setIsEmailFormDisabled(true)
+    }
+  }, [searchParams])
 
   const [formErrors, setFormErrors] = useState(initialErrorState);
   const [hidePassword, setHidePassword] = useState(true);
@@ -91,12 +111,13 @@ function RegisterForm() {
       //Set Loading
       setAuthObject({ ...authObject, isAuthenticating: true });
       try {
-        const user = await registerUser(form);
+        const data = await registerUser(form);
         setAuthObject({
           ...authObject,
           isLoading: false,
           isAuthenticating: false,
-          user: user,
+          user: data.user,
+          pendingInvites: data["pendingInvites"] || [],
           isSuccess: true,
         });
         router.push("/dashboard");
@@ -190,7 +211,10 @@ function RegisterForm() {
           <label htmlFor="email" className="text-gray-700 font-medium">
             Email
           </label>
-          <div className="flex gap-2 border-b border-gray-200  px-2">
+          <div className={clsx([
+            "flex gap-2 border-b border-gray-200  px-2",
+            isEmailFormDisabled && "opacity-50   bg-slate-300"
+          ])}>
             <UserIcon width={15} className="text-gray-500" />
             <input
               type="email"
@@ -200,7 +224,9 @@ function RegisterForm() {
               onChange={(e) =>
                 setForm({ ...form, [e.target.name]: e.target.value })
               }
+              value={form.email}
               className="min-h-[40px] w-full focus:outline-none px-2"
+              disabled={isEmailFormDisabled}
             />
           </div>
           {formErrors.email.length

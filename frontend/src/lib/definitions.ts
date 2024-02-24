@@ -62,7 +62,7 @@ export type ProjectWithTasks = {
 };
 
 export type Team = {
-  id?: number;
+  id: number;
   name: string;
   projects: PaginationObject<Project>;
   users: UserObject[];
@@ -86,8 +86,17 @@ export type UserObject = {
   avatar_src: string;
 };
 
+export type InviteObject = {
+  id: number;
+  status: string;
+  invited_by: string;
+  invited_by_name?: string; 
+  invited_by_img?: string; 
+  team:Team;
+}
 export type AuthObject = {
   user: UserObject;
+  pendingInvites: InviteObject[];
   isLoading: boolean;
   isAuthenticating: boolean;
   isSuccess: boolean;
