@@ -10,12 +10,14 @@ function AllInvites() {
   const { authObject } = useContext(AuthContext);
 
   useEffect(() => {
-    if (authObject && authObject.pendingInvites) {
+    if (authObject && !authObject.isLoading) {
       setIsLoading(false);
     }
   }, [authObject]);
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <div className="m-auto w-fit">
+    <Spinner customClass="regularSpinner" />
+  </div>;
 
   return (
     <>

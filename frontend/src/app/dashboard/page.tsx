@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 import { getDashboardData } from "@/lib/functions";
 
 export default function Page() {
-  const [isLoading, setIsLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState({
     latestProjects: [],
     latestUploads: [],
@@ -21,13 +20,13 @@ export default function Page() {
     const getDashboardDataAsync = async () => {
       try {
         const data = await getDashboardData();
-        setDashboardData({
-          ...dashboardData,
+        setDashboardData(prev=>({
+          ...prev,
           isLoading: false,
           latestProjects: data.latestProjects,
-          currentTasks: data.latestProjects[0].latest_tasks,
+          currentTasks: data.latestProjects.length && data.latestProjects[0].latest_tasks,
           latestUploads: data.latestUploads,
-        });
+        }));
       } catch (e) {
         //TODO: Implement Alert
       }

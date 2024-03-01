@@ -39,7 +39,7 @@ function SideNav() {
     },
     {
       name: "Edit Profile",
-      href: "/dashboard/user",
+      href: "/user",
       icon: DocumentDuplicateIcon,
     },
     {

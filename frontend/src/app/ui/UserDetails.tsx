@@ -5,6 +5,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { AuthContext } from "@/contexts/authContext";
 import UserDetailsSkeleton from "./UserDetailsSkeleton";
+import ProfilePicture from "./ProfilePicture";
 
 function UserDetails() {
   const hasNotification = true;
@@ -23,19 +24,7 @@ function UserDetails() {
                 hasNotification === true,
             })}
           >
-            <div className="rounded-full shadow-lg border-8 border-slate-100 overflow-hidden w-30 transition hover:shadow-xl">
-              <img
-                src={
-                  user.avatar_src
-                    ? `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/storage/${user.avatar_src}`
-                    : `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/storage/img/avatar.jpg`
-                }
-                width={100}
-                height={100}
-                className="rounded"
-                alt=""
-              />
-            </div>
+            <ProfilePicture imgSrc={user.avatar_src} size={100} />
           </Link>
 
           <Link href="/user">

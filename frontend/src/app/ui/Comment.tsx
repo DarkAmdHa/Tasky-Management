@@ -1,21 +1,13 @@
 import React from "react";
 import { Comment } from "../../lib/definitions";
 import Image from "next/image";
+import ProfilePicture from "./ProfilePicture";
 function Comment({ comment }: { comment: Comment }) {
   return (
     <div className="bg-tertiary p-4 shadow rounded  relative">
       <div className="flex gap-2 items-center cursor-pointer w-fit">
-        <Image
-          src={
-            comment.user.avatar_src
-              ? `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/storage/${comment.user.avatar_src}`
-              : `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/storage/img/avatar.jpg`
-          }
-          width={35}
-          height={35}
-          className="rounded-full overflow-hidden max-w-md border-2  border-slate-600"
-          alt=""
-        />
+        <ProfilePicture imgSrc={comment.user.avatar_src ?? ""} size={35} border={2} />
+        
         <div className="text-black text-xs flex gap-2 items-center justify-center">
           <div className="font-semibold ">{comment.user_id}</div>
           <div className="text-gray-400 ">{comment.created_at}</div>

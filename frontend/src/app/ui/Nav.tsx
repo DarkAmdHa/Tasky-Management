@@ -7,6 +7,7 @@ import { useContext, useState } from "react";
 import Image from "next/image";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { logoutUser } from "@/lib/functions";
+import ProfilePicture from "./ProfilePicture";
 
 function Nav() {
   const { authObject, setAuthObject } = useContext(AuthContext);
@@ -84,7 +85,8 @@ function Nav() {
               onMouseEnter={(e) => setHovering(true)}
               onMouseLeave={(e) => setHovering(false)}
             >
-              <img
+              <ProfilePicture imgSrc={authObject.user.avatar_src ?? ""} size={35} border={2} />
+              {/* <img
                 src={
                   authObject.user.avatar_src
                     ? `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/storage/${authObject.user.avatar_src}`
@@ -94,7 +96,7 @@ function Nav() {
                 height={35}
                 className="rounded-full overflow-hidden max-w-md border-2  border-slate-600"
                 alt={authObject.user.first_name}
-              />
+              /> */}
               <p className="flex gap-1">
                 {authObject.user.first_name}
                 <ChevronDownIcon

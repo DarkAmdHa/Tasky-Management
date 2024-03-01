@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\InviteEmailController;
+use App\Http\Controllers\InviteResponderController;
 use App\Models\Comment;
 use App\Models\Invite;
 use App\Models\Project;
@@ -32,6 +33,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 
 Route::middleware('auth:sanctum')->group(function(){
+
     Route::get('/user', function(Request $request){
         return $request->user();
     });
@@ -238,6 +240,7 @@ Route::middleware('auth:sanctum')->group(function(){
 
         if($validated){
             $email = $request->input("email");
+            $user = Auth::user();
 
             $team_id = $request->input("team_id") || "";
 
@@ -247,9 +250,11 @@ Route::middleware('auth:sanctum')->group(function(){
             }
 
             //Check if user already in team:
-            if($team_id != "" && $user = User::where("email", $email)->first()){
-                $isUserInTeam = DB::table("users_teams")->where("team_id", $team_id)->where("user_id", $user->id)->count() > 0;
-                return response()->json(["error"=>"User with provided email already in team"], Response::HTTP_BAD_REQUEST);
+            $userToInvite = User::where("email", $email)->first();
+            if($team_id != "" && $userToInvite){
+                $isUserInTeam = DB::table("users_teams")->where("team_id", $team_id)->where("user_id", $userToInvite->id)->count() > 0;
+                if($isUserInTeam)
+                    return response()->json(["error"=>"User with provided email already in team"], Response::HTTP_BAD_REQUEST);
             }
 
 
@@ -271,7 +276,7 @@ Route::middleware('auth:sanctum')->group(function(){
                 $team = "";
             }
 
-            $inviteEmail->sendInviteEmail($inviter->first_name . " " . $inviter->last_name, $email, $team,$user ? true : false );
+            $inviteEmail->sendInviteEmail($inviter->first_name . " " . $inviter->last_name, $email, $team,$userToInvite ? true : false );
             return response()->json(["success"=>"Invite sent successfully"], Response::HTTP_OK);
         }
 
@@ -289,15 +294,34 @@ Route::middleware('auth:sanctum')->group(function(){
             $user = Auth::user();
             $team = Team::find($team_id);
 
-            $isUserInTeam = DB::table("user_teams")->whereUserId($user->id)->whereTeamId($team->id)->count() > 0;
+            $isUserInTeam = DB::table("users_teams")->whereUserId($user->id)->whereTeamId($team->id)->count() > 0;
             if(!$isUserInTeam){
                 $invite = Invite::find($invite_id);
                 $invite->status = $status;
                 $invite->save();
+                $inviteResponse = new InviteResponderController();
+
                 if($status === Invite::STATUS_ACCEPTED){
-                    $team->users()->attach($user->id);
+                    $team->users()->attach($user->id,["isTeamAdmin"=> 0]);
+
+                    //Send response email to inviter:
+                    $inviteResponse->sendResponseEmail($invite->invited_by,[
+                        "teamName"=>$team->name,
+                        "accepted"=>true,
+                        "inviteeName"=>$user->first_name,
+                        "teamId"=>$team->id
+                    ]);
+
                     return response()->json(["success"=>"User joined the team " . $team->name], Response::HTTP_OK);
                 }
+                //Send response email to inviter:
+                $inviteResponse->sendResponseEmail($invite->invited_by,[
+                    "teamName"=>$team->name,
+                    "accepted"=>false,
+                    "inviteeName"=>$user->first_name,
+                    "teamId"=>$team->id
+                ]);
+
                 return response()->json(["success"=>"User declined to join the team " . $team->name], Response::HTTP_OK);
             }
             //User already in team
@@ -371,8 +395,8 @@ Route::middleware('auth:sanctum')->group(function(){
 
                     if($createdAtTimeStamp->diffInHours($currentTimestamp) < 48){
                         $invite->load("team");
-                        $inviter = User::where("email", $invite->invited_by);
-                        if(!isset($inviter)){
+                        $inviter = User::where("email", $invite->invited_by)->first();
+                        if(isset($inviter)){
                             $invite->invited_by_name = $inviter->first_name . " " . $inviter->last_name;
                             $invite->invited_by_img = $inviter->avatar_src;
                         }
